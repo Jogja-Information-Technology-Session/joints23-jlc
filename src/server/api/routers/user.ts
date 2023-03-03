@@ -14,8 +14,8 @@ export const userRouter = createTRPCRouter({
   createUser: adminProcedure
     .input(
       z.object({
-        username: z.string(),
-        password: z.string(),
+        username: z.string().min(3).max(20),
+        password: z.string().min(6).max(20),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -30,8 +30,6 @@ export const userRouter = createTRPCRouter({
       }
 
       const { username, password } = input;
-      // TODO: validate username and password
-
       // TODO env salt
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -69,7 +67,8 @@ export const userRouter = createTRPCRouter({
       const accessToken =
         jwt.sign(
           { userId: user.id, username: user.username, role: user.role },
-          env.JWT_ACCESSTOKEN_SECRET
+          env.JWT_ACCESSTOKEN_SECRET,
+          { expiresIn: "15m" }
         ) || "";
 
       const refreshToken =
@@ -80,22 +79,23 @@ export const userRouter = createTRPCRouter({
             role: user.role,
             tokenVersion: user.tokenVersion,
           },
-          env.JWT_REFRESHTOKEN_SECRET
+          env.JWT_REFRESHTOKEN_SECRET,
+          // TODO: adjust age
+          { expiresIn: "1d" }
         ) || "";
       ctx.res.setHeader("Set-Cookie", [
-        `jid=${refreshToken}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24 * 7}`,
+        `jid=${refreshToken}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24 * 1}`,
       ]);
 
       return accessToken;
     }),
   logout: publicProcedure.mutation(({ ctx }) => {
     ctx.res.setHeader("Set-Cookie", [`jid=; HttpOnly; Path=/; Max-Age=0`]);
+    // TODO: invalidate token
 
     return "Logout successful!";
-    // TODO
   }),
   refreshToken: privateProcedure.mutation(async ({ ctx }) => {
-    // TODO: verify refreshToken and return new accessToken
     if (!ctx.tokenData || typeof ctx.tokenData === "string") return null;
 
     const { userId, tokenVersion } = ctx.tokenData;

@@ -1,10 +1,11 @@
 import { type NextPage } from "next";
+import Link from "next/link";
 import { api, setToken } from "~/utils/api";
 
 const Login: NextPage = () => {
   const login = api.user.login.useMutation({
     onSuccess: (accessToken) => {
-      // TODO store accessToken in state
+      // TODO store accessToken in state?
       setToken(accessToken);
       console.log(accessToken);
     },
@@ -26,10 +27,31 @@ const Login: NextPage = () => {
     <>
       <form onSubmit={handleSubmit}>
         <label htmlFor="username">Username</label>
-        <input type="username" name="username" />
+        <input
+          className="rounded border shadow-sm"
+          type="username"
+          name="username"
+        />
+        <br />
         <label htmlFor="password">Password</label>
-        <input type="password" name="password" />
-        <button type="submit">Login</button>
+        <input
+          className="rounded border shadow-sm"
+          type="password"
+          name="password"
+        />
+        <br />
+        <button className="bg-blue-200" type="submit">
+          Login
+        </button>
+        <br />
+        <br />
+        <Link className="underline" href="/test/addUser">
+          addUser
+        </Link>
+        <br />
+        <Link className="underline" href="/test/addQuestion">
+          add Question
+        </Link>
       </form>
     </>
   );
