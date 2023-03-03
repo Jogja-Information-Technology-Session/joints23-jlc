@@ -2,29 +2,87 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mongodb"
-    url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model Example {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Exam {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  status    ExamStatus
+  startTime DateTime
+  endTime   DateTime
+  score     Int?
+
+  userID       String         @unique @db.ObjectId
+  user         User           @relation(fields: [userID], references: [id])
+  ExamQuestion ExamQuestion[]
+
+  @@map("exams")
+}
+
+model ExamQuestion {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  answer    Answer   @default(empty)
+
+  examID     String   @db.ObjectId
+  exam       Exam     @relation(fields: [examID], references: [id])
+  questionID String   @db.ObjectId
+  question   Question @relation(fields: [questionID], references: [id])
+
+  @@map("examQuestions")
+}
+
+model Question {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  question      String
+  correctAnswer Answer
+
+  ExamQuestion ExamQuestion[]
+
+  @@map("questions")
 }
 
 model User {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    username          String @unique
-    password          String
-    role Role @default(USER)
-    tokenVersion Int @default(0)
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  username     String @unique
+  password     String
+  role         Role   @default(USER)
+  tokenVersion Int    @default(0)
+
+  exam Exam?
+
+  @@map("users")
 }
 
 enum Role {
-    USER
-    ADMIN
+  USER
+  ADMIN
+}
+
+enum Answer {
+  A
+  B
+  C
+  D
+  empty
+}
+
+enum ExamStatus {
+  NOT_STARTED
+  STARTED
+  SUBMITTED
 }
