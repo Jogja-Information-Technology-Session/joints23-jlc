@@ -4,7 +4,7 @@ import { api, setToken } from "~/utils/api";
 
 const Login: NextPage = () => {
   const login = api.user.login.useMutation({
-    onSuccess: (accessToken) => {
+    onSuccess: (accessToken: string) => {
       // TODO store accessToken in state?
       setToken(accessToken);
       console.log(accessToken);

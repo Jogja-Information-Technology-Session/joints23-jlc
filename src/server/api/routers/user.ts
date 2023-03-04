@@ -95,12 +95,20 @@ export const userRouter = createTRPCRouter({
 
     return "Logout successful!";
   }),
-  refreshToken: privateProcedure.mutation(async ({ ctx }) => {
-    if (!ctx.tokenData || typeof ctx.tokenData === "string") return null;
+  refreshToken: publicProcedure.mutation(async ({ ctx }) => {
+    // if (!ctx.tokenData || typeof ctx.tokenData === "string") return null;
+    const { cookies } = ctx;
 
-    const { userId, tokenVersion } = ctx.tokenData;
+    const { jid } = cookies;
 
-    // TODO: extend jwt type
+    if (!jid) return null;
+
+    const payload = jwt.verify(jid, env.JWT_REFRESHTOKEN_SECRET);
+
+    if (!payload || typeof payload === "string") return null;
+
+    const { userId, tokenVersion } = payload;
+
     if (typeof userId !== "string") return null;
 
     const user = await ctx.prisma.user.findUnique({
@@ -116,9 +124,10 @@ export const userRouter = createTRPCRouter({
     const accessToken =
       jwt.sign(
         { userId: user.id, username: user.username, role: user.role },
-        env.JWT_ACCESSTOKEN_SECRET
+        env.JWT_ACCESSTOKEN_SECRET,
+        { expiresIn: "15m" }
       ) || "";
-
+    console.log("accessToken", accessToken);
     return accessToken;
   }),
 });
