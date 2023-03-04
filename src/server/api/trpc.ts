@@ -64,12 +64,37 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
 
     return payload;
   }
+
+  function parseCookies() {
+    const cookieHeader = req.headers.cookie;
+    if (!cookieHeader) {
+      return {};
+    }
+
+    const cookies: { [key: string]: string } = {};
+
+    const splittedCookieHeader = cookieHeader.split(";");
+
+    splittedCookieHeader.forEach((cookie) => {
+      const [name, value] = cookie.split("=");
+
+      if (name && value) {
+        cookies[name.trim()] = decodeURIComponent(value);
+      }
+    });
+
+    return cookies;
+  }
+
+  const cookies = parseCookies();
+
   const tokenData = getTokenDataFromHeader();
 
   const contextInner = createInnerTRPCContext({});
   return {
     ...contextInner,
     tokenData,
+    cookies,
     req,
     res,
   };
@@ -107,7 +132,7 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
 
   if (ctx.tokenData.role !== "ADMIN")
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+    throw new TRPCError({ code: "FORBIDDEN" });
 
   return next();
 });

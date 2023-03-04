@@ -1,9 +1,24 @@
 import { type NextPage } from "next";
-import { api } from "~/utils/api";
+import { api, setToken } from "~/utils/api";
 import { Answer } from "@prisma/client";
 
 const addUser: NextPage = () => {
-  const addQuestion = api.question.createQuestion.useMutation();
+  const refreshToken = api.user.refreshToken.useMutation({
+    onSuccess: (accessToken) => {
+      console.log(accessToken);
+      if (!accessToken) return;
+      setToken(accessToken);
+    },
+  });
+  const addQuestion = api.question.createQuestion.useMutation({
+    onError: (error, context) => {
+      if (error.message === "UNAUTHORIZED") {
+        // refresh token
+        refreshToken.mutate();
+        addQuestion.mutate(context);
+      }
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -15,6 +30,11 @@ const addUser: NextPage = () => {
     const answer = target.answer.value;
 
     addQuestion.mutate({ correctAnswer: answer, questionPrompt: question });
+  };
+
+  const handleRefresh = () => {
+    refreshToken.mutate();
+    console.log("refreshed");
   };
 
   return (
@@ -33,6 +53,7 @@ const addUser: NextPage = () => {
         <br />
         <button type="submit">create</button>
       </form>
+      <button onClick={handleRefresh}>RefreshToken</button>
     </>
   );
 };
