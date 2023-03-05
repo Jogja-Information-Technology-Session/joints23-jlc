@@ -2,9 +2,24 @@ import { type NextPage } from "next";
 import { api, setToken } from "~/utils/api";
 
 const addUser: NextPage = () => {
-  const createUser = api.user.createUser.useMutation();
+  const createUser = api.user.createUser.useMutation({
+    onError: async (error, context) => {
+      if (error.message === "UNAUTHORIZED") {
+        await refreshToken.mutateAsync();
+        createUser.mutate(context);
+        return;
+      }
+    },
+  });
   const login = api.user.login.useMutation({
     onSuccess: (accessToken) => {
+      setToken(accessToken);
+    },
+  });
+
+  const refreshToken = api.user.refreshToken.useMutation({
+    onSuccess: (accessToken) => {
+      if (!accessToken) return;
       setToken(accessToken);
     },
   });

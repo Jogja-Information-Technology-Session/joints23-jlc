@@ -5,17 +5,17 @@ import { Answer } from "@prisma/client";
 const addUser: NextPage = () => {
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (accessToken) => {
-      console.log(accessToken);
       if (!accessToken) return;
       setToken(accessToken);
     },
   });
   const addQuestion = api.question.createQuestion.useMutation({
-    onError: (error, context) => {
+    onError: async (error, context) => {
       if (error.message === "UNAUTHORIZED") {
         // refresh token
-        refreshToken.mutate();
+        await refreshToken.mutateAsync();
         addQuestion.mutate(context);
+        return;
       }
     },
   });

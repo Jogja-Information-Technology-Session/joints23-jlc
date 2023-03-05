@@ -38,7 +38,7 @@ model ExamQuestion {
   updatedAt DateTime @updatedAt
   answer    Answer   @default(empty)
 
-  examID     String   @db.ObjectId
+  examID     String   @unique @db.ObjectId
   exam       Exam     @relation(fields: [examID], references: [id])
   questionID String   @db.ObjectId
   question   Question @relation(fields: [questionID], references: [id])
@@ -47,8 +47,12 @@ model ExamQuestion {
 }
 
 model Question {
-  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
   question      String
+  A             String
+  B             String
+  C             String
+  D             String
   correctAnswer Answer
 
   ExamQuestion ExamQuestion[]

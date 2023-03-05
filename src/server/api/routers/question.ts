@@ -1,11 +1,6 @@
 import { z } from "zod";
 
-import {
-  adminProcedure,
-  createTRPCRouter,
-  privateProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
 
 import { Answer } from "@prisma/client";
 
@@ -23,6 +18,10 @@ export const questionRouter = createTRPCRouter({
       const question = await ctx.prisma.question.create({
         data: {
           question: questionPrompt,
+          A: "A adsfadsf?",
+          B: "B adsfadsf?",
+          C: "C adsfadsf?",
+          D: "D adsfadsf?",
           correctAnswer: correctAnswer,
         },
       });

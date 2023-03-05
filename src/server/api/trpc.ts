@@ -60,7 +60,7 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
 
     const payload = jwt.verify(token, env.JWT_ACCESSTOKEN_SECRET);
 
-    if (!payload) return null;
+    if (!payload || typeof payload === "string") return null;
 
     return payload;
   }
