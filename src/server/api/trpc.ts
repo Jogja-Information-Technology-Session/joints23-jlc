@@ -128,8 +128,7 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
 });
 
 const isAdmin = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.tokenData || typeof ctx.tokenData === "string")
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!ctx.tokenData) throw new TRPCError({ code: "UNAUTHORIZED" });
 
   if (ctx.tokenData.role !== "ADMIN")
     throw new TRPCError({ code: "FORBIDDEN" });
