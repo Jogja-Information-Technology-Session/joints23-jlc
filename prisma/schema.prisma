@@ -33,6 +33,7 @@ model Exam {
 
 model ExamQuestion {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  order    Int
   answerID String   @db.ObjectId
   userAnswer    Option @relation(fields: [answerID], references: [id])  
 
@@ -47,7 +48,8 @@ model ExamQuestion {
 model Question { // bank soal
   id            String @id @default(auto()) @map("_id") @db.ObjectId
   question      String
-  correctAnswerID String @db.ObjectId
+  image         String?
+  type         ExamType
 
   ExamQuestion ExamQuestion[]
   Option       Option[]
@@ -58,6 +60,7 @@ model Question { // bank soal
 model Option {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   prompt    String  @unique
+  isCorrect  Boolean @default(false)
 
   ExamQuestion ExamQuestion[]
   questionID String   @db.ObjectId
@@ -91,5 +94,5 @@ enum ExamStatus {
 
 enum ExamType {
   WARM_UP
-  EXAM
+  PENYISIHAN
 }

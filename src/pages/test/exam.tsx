@@ -10,7 +10,18 @@ const addUser: NextPage = () => {
     },
   });
 
-  const questions = api.exam.getQuestions.useQuery(undefined, {
+  const handleRefresh = () => {
+    refreshToken.mutate();
+    console.log("refreshed");
+  };
+
+  const addQuestion = api.question.inputQuestion.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+  });
+
+  const questions = api.question.getAll.useQuery(undefined, {
     onError: (error) => {
       if (error.message === "UNAUTHORIZED") {
         refreshToken
@@ -23,18 +34,36 @@ const addUser: NextPage = () => {
           });
       }
     },
+    enabled: false,
   });
 
-  console.log(questions.data);
-
-  const handleRefresh = () => {
-    refreshToken.mutate();
-    console.log("refreshed");
+  const handleGet = () => {
+    questions
+      .refetch()
+      .then((questions) => {
+        console.log(questions.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
     <>
       <button onClick={handleRefresh}>RefreshToken</button>
+      <img src="https://drive.google.com/uc?export=view&id=1rH8GNTqmxpqYqWY-6h4zAIrQADi1SOwO" />
+      <button onClick={() => addQuestion.mutate()}>add question</button>
+      <br />
+      {/* <button onClick={handleGetQuestion}>get questions</button> */}
+      <button
+        onClick={() => {
+          console.log(questions.data);
+        }}
+      >
+        get questions
+      </button>
+
+      <button onClick={handleGet}>get once questions</button>
     </>
   );
 };
