@@ -19,7 +19,7 @@ model Example {
 model Exam {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   type      ExamType
-  status    ExamStatus
+  status    ExamStatus @default(NOT_STARTED)
   startTime DateTime
   endTime   DateTime
   score     Int?
@@ -34,8 +34,8 @@ model Exam {
 model ExamQuestion {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   order    Int
-  answerID String   @db.ObjectId
-  userAnswer    Option @relation(fields: [answerID], references: [id])  
+  answerID String?   @db.ObjectId
+  userAnswer    Option? @relation(fields: [answerID], references: [id])  
 
   examID     String   @unique @db.ObjectId
   exam       Exam     @relation(fields: [examID], references: [id])
