@@ -1,11 +1,6 @@
-import { z } from "zod";
-import { ExamType } from "@prisma/client";
+import { type ExamType } from "@prisma/client";
 
-import {
-  publicProcedure,
-  adminProcedure,
-  createTRPCRouter,
-} from "~/server/api/trpc";
+import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 export const questionRouter = createTRPCRouter({
@@ -83,7 +78,7 @@ export const questionRouter = createTRPCRouter({
 const questionData = [
   {
     questionPrompt: "the apple is red",
-    type: "PENYISIHAN",
+    type: "WARM_UP",
     image:
       "https://drive.google.com/uc?export=view&id=1rH8GNTqmxpqYqWY-6h4zAIrQADi1SOwO",
     option1: "no it is not",
@@ -95,7 +90,7 @@ const questionData = [
   },
   {
     questionPrompt: "the apple is red",
-    type: "PENYISIHAN",
+    type: "WARM_UP",
     image: "",
     option1: "no it is not",
     option2: "yes it is not",

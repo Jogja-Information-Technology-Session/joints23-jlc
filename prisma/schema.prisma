@@ -19,7 +19,7 @@ model Example {
 model Exam {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   type      ExamType
-  status    ExamStatus
+  status    ExamStatus @default(NOT_STARTED)
   startTime DateTime
   endTime   DateTime
   score     Int?
@@ -32,10 +32,11 @@ model Exam {
 }
 
 model ExamQuestion {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  order    Int
-  answerID String   @db.ObjectId
-  userAnswer    Option @relation(fields: [answerID], references: [id])  
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  order       Int
+  answerID    String? @db.ObjectId
+  userAnswer  Option? @relation(fields: [answerID], references: [id])
+  optionOrder Int[]   @default([0, 1, 2, 3, 4])
 
   examID     String   @unique @db.ObjectId
   exam       Exam     @relation(fields: [examID], references: [id])
@@ -45,11 +46,11 @@ model ExamQuestion {
   @@map("examQuestions")
 }
 
-model Question { // bank soal
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  question      String
-  image         String?
-  type         ExamType
+model Question {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  question String
+  image    String?
+  type     ExamType
 
   ExamQuestion ExamQuestion[]
   Option       Option[]
@@ -58,13 +59,13 @@ model Question { // bank soal
 }
 
 model Option {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
   prompt    String  @unique
-  isCorrect  Boolean @default(false)
+  isCorrect Boolean @default(false)
 
   ExamQuestion ExamQuestion[]
-  questionID String   @db.ObjectId
-  question   Question @relation(fields: [questionID], references: [id])
+  questionID   String         @db.ObjectId
+  question     Question       @relation(fields: [questionID], references: [id])
 
   @@map("options")
 }
