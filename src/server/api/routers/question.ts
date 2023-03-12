@@ -1,5 +1,4 @@
-import { z } from "zod";
-import { ExamType } from "@prisma/client";
+import { type ExamType } from "@prisma/client";
 
 import { adminProcedure, createTRPCRouter } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";

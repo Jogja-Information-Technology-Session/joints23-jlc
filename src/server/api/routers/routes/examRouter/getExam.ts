@@ -1,7 +1,7 @@
 import { privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
-import { ExamType } from "@prisma/client";
+import { ExamType, type Option } from "@prisma/client";
 
 // TODO: dev only, delete later
 export const getWarmUpExamQuestions = privateProcedure.query(
@@ -51,17 +51,28 @@ export const getWarmUpExamQuestions = privateProcedure.query(
       },
     });
 
-    // get options
-    const options = await Promise.all(
-      questions.map(async (question) => {
-        const o = await ctx.prisma.option.findMany({
-          where: {
-            questionID: question.question.id,
-          },
+    const optionsMap = new Map<string, Option[]>();
+    // shuffle options
+    for (const question of questions) {
+      const optionOrder = question.optionOrder;
+      console.log(optionOrder);
+
+      const options = await ctx.prisma.option.findMany({
+        where: {
+          questionID: question.question.id,
+        },
+      });
+
+      if (options.length === 0)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get options!",
         });
-        return o;
-      })
-    );
+
+      const shuffledOptions = optionOrder.map((order) => options[order]);
+
+      optionsMap.set(question.id, shuffledOptions as Option[]);
+    }
 
     if (!questions)
       throw new TRPCError({
@@ -71,7 +82,7 @@ export const getWarmUpExamQuestions = privateProcedure.query(
 
     return {
       questions,
-      options,
+      optionsMap,
     };
   }
 );

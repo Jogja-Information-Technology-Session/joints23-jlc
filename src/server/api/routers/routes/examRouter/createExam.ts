@@ -1,7 +1,7 @@
 import { privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
-import { ExamType, ExamStatus } from "@prisma/client";
+import { ExamType, ExamStatus, type Question } from "@prisma/client";
 
 export const createWarmUpExam = privateProcedure.mutation(async ({ ctx }) => {
   if (!ctx.tokenData)
@@ -55,16 +55,16 @@ export const createWarmUpExam = privateProcedure.mutation(async ({ ctx }) => {
       message: "Failed to get questions!",
     });
 
-  // TODO: shuffle questions
-  // Shuffle questions
+  // shuffle questions
+  const shuffledQuestions = shuffleArray<Question>(questions);
 
-  // TODO: add options order
   // create exam questions
   const examQuestions = await ctx.prisma.examQuestion.createMany({
-    data: questions.map((question, index) => ({
+    data: shuffledQuestions.map((question, index) => ({
       order: index,
       examID: exam.id,
       questionID: question.id,
+      optionOrder: shuffleArray<number>([0, 1, 2, 3, 4]),
     })),
   });
 
@@ -106,3 +106,14 @@ export const createExam = privateProcedure.mutation(async ({ ctx }) => {
 
   //   create exam
 });
+
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = shuffledArray[i] as T;
+    shuffledArray[i] = shuffledArray[j] as T;
+    shuffledArray[j] = temp;
+  }
+  return shuffledArray.filter((item): item is T => typeof item !== "undefined");
+}
