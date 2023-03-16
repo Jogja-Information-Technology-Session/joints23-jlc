@@ -4,7 +4,7 @@ import { api, setToken } from "../../utils/api";
 import Image from "next/image";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string().required("*Required"),
@@ -14,6 +14,19 @@ const LoginSchema = Yup.object().shape({
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
+
+  const refreshToken = api.user.refreshToken.useMutation({
+    onSuccess: (accessToken) => {
+      if (!accessToken) return;
+      setToken(accessToken);
+      void router.push("/");
+    },
+  });
+
+  //refresh token upon page load (only once)
+  useEffect(() => {
+    refreshToken.mutate();
+  }, []);
 
   const login = api.user.login.useMutation({
     onSuccess: (accessToken: string) => {
@@ -267,9 +280,11 @@ export default function LoginPage() {
               >
                 Sign In
               </button>
-              {
-                error !== "" ? <p className="pt-3 text-red-500">*{error}</p> : <p>Gaada error</p>
-              }
+              {error !== "" ? (
+                <p className="pt-3 text-red-500">*{error}</p>
+              ) : (
+                <p>Gaada error</p>
+              )}
             </Form>
           )}
         </Formik>
