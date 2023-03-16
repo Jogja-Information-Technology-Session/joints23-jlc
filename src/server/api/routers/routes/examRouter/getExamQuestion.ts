@@ -1,37 +1,52 @@
+import { z } from "zod";
 import { privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 import { ExamType, type Option } from "@prisma/client";
+import { getUserId } from "~/server/api/services/authService";
+import {
+  checkExamStatus,
+  getExamByUserId,
+  getExamQuestionByIndex,
+  getShuffledOptions,
+} from "~/server/api/services/examService";
+
+export const getWarmUpQuestion = privateProcedure
+  .input(z.object({ index: z.number() }))
+  .query(async ({ ctx, input }) => {
+    const userId = await getUserId(ctx.tokenData, ctx.prisma);
+
+    // find exam by user id and type
+    const exam = await getExamByUserId(userId, ExamType.WARM_UP, ctx.prisma);
+
+    // check exam status
+    checkExamStatus(exam.status);
+
+    // get exam question
+    const examQuestion = await getExamQuestionByIndex(
+      exam.id,
+      input.index,
+      ctx.prisma
+    );
+
+    // get options
+    const options = await getShuffledOptions(
+      examQuestion.id,
+      examQuestion.optionOrder,
+      ctx.prisma
+    );
+
+    return {
+      question: examQuestion.question.question,
+      options: options,
+      answer: examQuestion.answerID,
+    };
+  });
 
 // TODO: dev only, delete later
 export const getWarmUpExamQuestions = privateProcedure.query(
   async ({ ctx }) => {
-    if (!ctx.tokenData)
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "User not authorized!",
-      });
-    const { userId } = ctx.tokenData;
-
-    if (typeof userId !== "string") {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "User not authorized!",
-      });
-    }
-
-    const user = await ctx.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-
-    if (!user) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "User not found!",
-      });
-    }
+    const userId = await getUserId(ctx.tokenData, ctx.prisma);
 
     // get warm up questions
     const questions = await ctx.prisma.examQuestion.findMany({

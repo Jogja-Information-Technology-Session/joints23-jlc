@@ -21,6 +21,7 @@ const addUser: NextPage = () => {
     },
   });
 
+  // get all question
   const questions = api.question.getAll.useQuery(undefined, {
     onError: (error) => {
       if (error.message === "UNAUTHORIZED") {
@@ -37,6 +38,27 @@ const addUser: NextPage = () => {
     enabled: false,
   });
 
+  // get warm up question by index (private)
+  const question = api.exam.getWarmUpQuestion.useQuery(
+    { index: 0 },
+    {
+      onError: (error) => {
+        if (error.message === "UNAUTHORIZED") {
+          refreshToken
+            .mutateAsync()
+            .then(() => {
+              void question.refetch();
+            })
+            .catch(() => {
+              console.log("error");
+            });
+        }
+      },
+      retry: 0,
+      enabled: false,
+    }
+  );
+
   const handleGet = () => {
     questions
       .refetch()
@@ -46,6 +68,15 @@ const addUser: NextPage = () => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const handleGetQuestion = () => {
+    question
+      .refetch()
+      .then((question) => {
+        console.log(question.data);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -64,6 +95,8 @@ const addUser: NextPage = () => {
       </button>
 
       <button onClick={handleGet}>get once questions</button>
+      <br />
+      <button onClick={handleGetQuestion}>get question</button>
     </>
   );
 };
