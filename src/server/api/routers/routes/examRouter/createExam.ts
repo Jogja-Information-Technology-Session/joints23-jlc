@@ -2,7 +2,7 @@ import { privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 import { ExamType, ExamStatus, type Question } from "@prisma/client";
-import { getUserId } from "~/server/api/server_utils/auth";
+import { getUserId } from "~/server/api/services/authService";
 
 export const createWarmUpExam = privateProcedure.mutation(async ({ ctx }) => {
   const userId = await getUserId(ctx.tokenData, ctx.prisma);

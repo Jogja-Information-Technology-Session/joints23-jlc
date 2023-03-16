@@ -64,6 +64,33 @@ export async function getExamQuestionByIndex(
   return examQuestion;
 }
 
+export async function getAllExamQuestionsStatus(
+  examId: string,
+  prisma: PrismaClient
+) {
+  const examQuestions = await prisma.examQuestion.findMany({
+    where: {
+      examID: examId,
+    },
+  });
+
+  if (!examQuestions || examQuestions.length === 0)
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to get exam questions!",
+    });
+
+  const examQuestionsStatus = examQuestions.map((examQuestion) => {
+    return {
+      index: examQuestion.order,
+      isAnswered: examQuestion.answerID ? true : false,
+      isFlagged: examQuestion.isFlagged,
+    };
+  });
+
+  return examQuestionsStatus;
+}
+
 export async function getShuffledOptions(
   questionId: string,
   optionOrder: number[],

@@ -15,29 +15,6 @@ const addUser: NextPage = () => {
     console.log("refreshed");
   };
 
-  // const addQuestion = api.question.inputQuestion.useMutation({
-  //   onSuccess: () => {
-  //     console.log("success");
-  //   },
-  // });
-
-  // get all question
-  const questions = api.question.getAll.useQuery(undefined, {
-    onError: (error) => {
-      if (error.message === "UNAUTHORIZED") {
-        refreshToken
-          .mutateAsync()
-          .then(() => {
-            void questions.refetch();
-          })
-          .catch(() => {
-            console.log("error");
-          });
-      }
-    },
-    enabled: false,
-  });
-
   // get warm up question by index (private)
   const question = api.exam.getExamQuestion.useQuery(
     { index: 0, examType: "WARM_UP" },
@@ -79,16 +56,23 @@ const addUser: NextPage = () => {
     }
   );
 
-  const handleGet = () => {
-    questions
-      .refetch()
-      .then((questions) => {
-        console.log(questions.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const updateAnswer = api.exam.setAnswer.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+    onError: (error) => {
+      if (error.message === "UNAUTHORIZED") {
+        refreshToken
+          .mutateAsync()
+          .then(() => {
+            void question.refetch();
+          })
+          .catch(() => {
+            console.log("error");
+          });
+      }
+    },
+  });
 
   const handleGetQuestion = () => {
     question
@@ -99,21 +83,27 @@ const addUser: NextPage = () => {
       .catch((err) => console.log(err));
   };
 
+  const clearAnswer = api.exam.clearAnswer.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+    onError: (error) => {
+      if (error.message === "UNAUTHORIZED") {
+        refreshToken
+          .mutateAsync()
+          .then(() => {
+            void question.refetch();
+          })
+          .catch(() => {
+            console.log("error");
+          });
+      }
+    },
+  });
+
   return (
     <>
       <button onClick={handleRefresh}>RefreshToken</button>
-      {/* <button onClick={() => addQuestion.mutate()}>add question</button> */}
-      <br />
-      {/* <button onClick={handleGetQuestion}>get questions</button> */}
-      <button
-        onClick={() => {
-          console.log(questions.data);
-        }}
-      >
-        get questions
-      </button>
-      <br />
-      <button onClick={handleGet}>get once questions</button>
       <br />
       <button onClick={handleGetQuestion}>get question</button>
       <br />
@@ -130,6 +120,36 @@ const addUser: NextPage = () => {
         }}
       >
         get all question status
+      </button>
+      <br />
+      <form
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+          e.preventDefault();
+
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          const input = (e.target as HTMLFormElement).optionId.value;
+          updateAnswer.mutate({
+            examQuestionId: "640e1015c226f18fe4fe4724",
+            examType: "WARM_UP",
+            index: 0,
+            optionId: input as string,
+          });
+        }}
+      >
+        <input className="outline-double" type="text" name="optionId" />
+        <button type="submit">submit</button>
+      </form>
+      <br />
+      <button
+        onClick={() => {
+          clearAnswer.mutate({
+            examQuestionId: "640e1015c226f18fe4fe4724",
+            examType: "WARM_UP",
+            index: 0,
+          });
+        }}
+      >
+        clear answer
       </button>
     </>
   );
