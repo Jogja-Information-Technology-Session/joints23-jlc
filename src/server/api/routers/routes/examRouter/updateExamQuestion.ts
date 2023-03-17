@@ -101,3 +101,44 @@ export const clearAnswer = privateProcedure
       answer: updatedExamQuestion.answerID,
     };
   });
+
+export const toggleFlagQuestion = privateProcedure
+  .input(
+    z.object({
+      examQuestionId: z.string().length(24),
+      examType: z.nativeEnum(ExamType),
+      index: z.number(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    // get user id
+    const userId = await getUserId(ctx.tokenData, ctx.prisma);
+
+    // find exam by user id and type
+    const exam = await getExamByUserId(userId, input.examType, ctx.prisma);
+
+    // check exam status
+    checkExamStatus(exam.status);
+
+    // get exam question
+    const examQuestion = await getExamQuestionByIndex(
+      exam.id,
+      input.index,
+      ctx.prisma
+    );
+
+    // toggle flag
+    const updatedExamQuestion = await ctx.prisma.examQuestion.update({
+      where: {
+        id: examQuestion.id,
+      },
+      data: {
+        isFlagged: !examQuestion.isFlagged,
+      },
+    });
+
+    return {
+      index: updatedExamQuestion.order,
+      isFlagged: updatedExamQuestion.isFlagged,
+    };
+  });

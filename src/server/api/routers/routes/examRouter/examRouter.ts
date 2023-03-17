@@ -5,7 +5,11 @@ import {
   getExamQuestion,
   getExamQuestionStatus,
 } from "./getExamQuestion";
-import { clearAnswer, setAnswer } from "./updateExamQuestion";
+import {
+  clearAnswer,
+  setAnswer,
+  toggleFlagQuestion,
+} from "./updateExamQuestion";
 
 export const examRouter = createTRPCRouter({
   createWarmUpExam,
@@ -14,4 +18,5 @@ export const examRouter = createTRPCRouter({
   getExamQuestionStatus,
   setAnswer,
   clearAnswer,
+  toggleFlagQuestion,
 });

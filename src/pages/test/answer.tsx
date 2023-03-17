@@ -74,6 +74,24 @@ const addUser: NextPage = () => {
     },
   });
 
+  const toggleFlag = api.exam.toggleFlagQuestion.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+    onError: (error) => {
+      if (error.message === "UNAUTHORIZED") {
+        refreshToken
+          .mutateAsync()
+          .then(() => {
+            void question.refetch();
+          })
+          .catch(() => {
+            console.log("error");
+          });
+      }
+    },
+  });
+
   const handleGetQuestion = () => {
     question
       .refetch()
@@ -150,6 +168,18 @@ const addUser: NextPage = () => {
         }}
       >
         clear answer
+      </button>
+      <br />
+      <button
+        onClick={() => {
+          toggleFlag.mutate({
+            examQuestionId: "640e1015c226f18fe4fe4724",
+            examType: "WARM_UP",
+            index: 0,
+          });
+        }}
+      >
+        flag question
       </button>
     </>
   );
