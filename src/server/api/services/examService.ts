@@ -11,20 +11,12 @@ export async function getExamByUserId(
   examType: ExamType,
   prisma: PrismaClient
 ) {
-  const exams = await prisma.exam.findMany({
+  const exam = await prisma.exam.findFirst({
     where: {
       userID: userId,
       type: examType,
     },
   });
-
-  if (!exams || exams.length === 0)
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to get exam!",
-    });
-
-  const exam = exams[0];
 
   if (!exam)
     throw new TRPCError({ code: "NOT_FOUND", message: "Exam not found!" });
@@ -37,7 +29,7 @@ export async function getExamQuestionByIndex(
   index: number,
   prisma: PrismaClient
 ) {
-  const examQuestions = await prisma.examQuestion.findMany({
+  const examQuestion = await prisma.examQuestion.findFirst({
     where: {
       examID: examId,
       order: index,
@@ -46,14 +38,6 @@ export async function getExamQuestionByIndex(
       question: true,
     },
   });
-
-  if (!examQuestions || examQuestions.length === 0)
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to get exam questions!",
-    });
-
-  const examQuestion = examQuestions[0];
 
   if (!examQuestion)
     throw new TRPCError({

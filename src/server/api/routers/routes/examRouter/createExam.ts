@@ -1,106 +1,79 @@
+import { z } from "zod";
 import { privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 import { ExamType, ExamStatus, type Question } from "@prisma/client";
 import { getUserId } from "~/server/api/services/authService";
 
-export const createWarmUpExam = privateProcedure.mutation(async ({ ctx }) => {
-  const userId = await getUserId(ctx.tokenData, ctx.prisma);
+export const createExam = privateProcedure
+  .input(
+    z.object({
+      examType: z.nativeEnum(ExamType),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    // get user Id
+    const userId = await getUserId(ctx.tokenData, ctx.prisma);
 
-  // create exam
-  const exam = await ctx.prisma.exam.create({
-    data: {
-      type: ExamType.WARM_UP,
-      startTime: new Date(),
-      endTime: new Date(),
-      status: ExamStatus.NOT_STARTED,
-      userID: userId,
-    },
-  });
-
-  // get warm up questions
-  const questions = await ctx.prisma.question.findMany({
-    where: {
-      type: ExamType.WARM_UP,
-    },
-  });
-
-  if (!questions || questions.length === 0)
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to get questions!",
+    // check if user already has the exam
+    const duplicateExam = await ctx.prisma.exam.findFirst({
+      where: {
+        userID: userId,
+        type: input.examType,
+      },
     });
 
-  // shuffle questions
-  const shuffledQuestions = shuffleArray<Question>(questions);
+    if (duplicateExam)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "You already have this exam!",
+      });
 
-  // create exam questions
-  const examQuestions = await ctx.prisma.examQuestion.createMany({
-    data: shuffledQuestions.map((question, index) => ({
-      order: index,
-      examID: exam.id,
-      questionID: question.id,
-      optionOrder: shuffleArray<number>([0, 1, 2, 3, 4]),
-    })),
-  });
-
-  if (!examQuestions)
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to create exam questions!",
+    // create exam
+    const exam = await ctx.prisma.exam.create({
+      data: {
+        type: input.examType,
+        startTime: new Date(),
+        endTime: new Date(),
+        status: ExamStatus.NOT_STARTED,
+        userID: userId,
+      },
     });
 
-  return exam;
-});
-
-export const createExam = privateProcedure.mutation(async ({ ctx }) => {
-  const userId = await getUserId(ctx.tokenData, ctx.prisma);
-
-  // create exam
-  const exam = await ctx.prisma.exam.create({
-    data: {
-      type: ExamType.WARM_UP,
-      startTime: new Date(),
-      endTime: new Date(),
-      status: ExamStatus.NOT_STARTED,
-      userID: userId,
-    },
-  });
-
-  // get warm up questions
-  const questions = await ctx.prisma.question.findMany({
-    where: {
-      type: ExamType.WARM_UP,
-    },
-  });
-
-  if (!questions || questions.length === 0)
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to get questions!",
+    // get warm up questions
+    const questions = await ctx.prisma.question.findMany({
+      where: {
+        type: input.examType,
+      },
     });
 
-  // shuffle questions
-  const shuffledQuestions = shuffleArray<Question>(questions);
+    if (!questions || questions.length === 0)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to get questions!",
+      });
 
-  // create exam questions
-  const examQuestions = await ctx.prisma.examQuestion.createMany({
-    data: shuffledQuestions.map((question, index) => ({
-      order: index,
-      examID: exam.id,
-      questionID: question.id,
-      optionOrder: shuffleArray<number>([0, 1, 2, 3, 4]),
-    })),
-  });
+    // shuffle questions
+    const shuffledQuestions = shuffleArray<Question>(questions);
 
-  if (!examQuestions)
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to create exam questions!",
+    // create exam questions
+    const examQuestions = await ctx.prisma.examQuestion.createMany({
+      data: shuffledQuestions.map((question, index) => ({
+        order: index,
+        examID: exam.id,
+        questionID: question.id,
+        optionOrder: shuffleArray<number>([0, 1, 2, 3, 4]),
+      })),
     });
 
-  return exam;
-});
+    if (!examQuestions)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to create exam questions!",
+      });
+
+    return exam;
+  });
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffledArray = [...array];

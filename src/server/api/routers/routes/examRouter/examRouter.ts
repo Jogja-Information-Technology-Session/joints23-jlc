@@ -1,5 +1,5 @@
 import { createTRPCRouter } from "~/server/api/trpc";
-import { createWarmUpExam } from "./createExam";
+import { createExam } from "./createExam";
 import {
   getWarmUpExamQuestions,
   getExamQuestion,
@@ -12,7 +12,7 @@ import {
 } from "./updateExamQuestion";
 
 export const examRouter = createTRPCRouter({
-  createWarmUpExam,
+  createExam,
   getWarmUpExamQuestions,
   getExamQuestion,
   getExamQuestionStatus,

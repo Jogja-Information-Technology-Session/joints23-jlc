@@ -36,28 +36,8 @@ const addUser: NextPage = () => {
       }
     },
     enabled: false,
+    retry: 0,
   });
-
-  // get warm up question by index (private)
-  const question = api.exam.getExamQuestion.useQuery(
-    { index: 0, examType: "WARM_UP" },
-    {
-      onError: (error) => {
-        if (error.message === "UNAUTHORIZED") {
-          refreshToken
-            .mutateAsync()
-            .then(() => {
-              void question.refetch();
-            })
-            .catch(() => {
-              console.log("error");
-            });
-        }
-      },
-      retry: 0,
-      enabled: false,
-    }
-  );
 
   const questionsStatus = api.exam.getExamQuestionStatus.useQuery(
     { examType: "WARM_UP" },
@@ -67,7 +47,7 @@ const addUser: NextPage = () => {
           refreshToken
             .mutateAsync()
             .then(() => {
-              void question.refetch();
+              void questionsStatus.refetch();
             })
             .catch(() => {
               console.log("error");
@@ -90,15 +70,6 @@ const addUser: NextPage = () => {
       });
   };
 
-  const handleGetQuestion = () => {
-    question
-      .refetch()
-      .then((question) => {
-        console.log(question.data);
-      })
-      .catch((err) => console.log(err));
-  };
-
   return (
     <>
       <button onClick={handleRefresh}>RefreshToken</button>
@@ -113,9 +84,7 @@ const addUser: NextPage = () => {
         get questions
       </button>
       <br />
-      <button onClick={handleGet}>get once questions</button>
-      <br />
-      <button onClick={handleGetQuestion}>get question</button>
+      <button onClick={handleGet}>get questions</button>
       <br />
       <button
         onClick={() => {

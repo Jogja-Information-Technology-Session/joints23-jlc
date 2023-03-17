@@ -2,7 +2,7 @@
 import { type NextPage } from "next";
 import { api, setToken } from "~/utils/api";
 
-const addUser: NextPage = () => {
+const Answer: NextPage = () => {
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (accessToken) => {
       if (!accessToken) return;
@@ -17,7 +17,7 @@ const addUser: NextPage = () => {
 
   // get warm up question by index (private)
   const question = api.exam.getExamQuestion.useQuery(
-    { index: 0, examType: "WARM_UP" },
+    { index: 10, examType: "WARM_UP" },
     {
       onError: (error) => {
         if (error.message === "UNAUTHORIZED") {
@@ -185,4 +185,4 @@ const addUser: NextPage = () => {
   );
 };
 
-export default addUser;
+export default Answer;
