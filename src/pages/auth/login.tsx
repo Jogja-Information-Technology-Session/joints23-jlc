@@ -283,7 +283,7 @@ export default function LoginPage() {
               {error !== "" ? (
                 <p className="pt-3 text-red-500">*{error}</p>
               ) : (
-                <p>Gaada error</p>
+                <p></p>
               )}
             </Form>
           )}
