@@ -16,8 +16,10 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const refreshToken = api.user.refreshToken.useMutation({
-    onSuccess: (accessToken) => {
-      if (!accessToken) return;
+    onSuccess: (payload) => {
+      if (!payload) return;
+      const { accessToken, username } = payload;
+
       setToken(accessToken);
       void router.push("/");
     },
@@ -29,7 +31,9 @@ export default function LoginPage() {
   }, []);
 
   const login = api.user.login.useMutation({
-    onSuccess: (accessToken: string) => {
+    onSuccess: (payload) => {
+      const { accessToken, username } = payload;
+
       setToken(accessToken);
       void router.push("/");
     },

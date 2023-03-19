@@ -4,9 +4,12 @@ import { api, setToken } from "~/utils/api";
 
 const Answer: NextPage = () => {
   const refreshToken = api.user.refreshToken.useMutation({
-    onSuccess: (accessToken) => {
-      if (!accessToken) return;
+    onSuccess: (payload) => {
+      if (!payload) return;
+      const { accessToken, username } = payload;
       setToken(accessToken);
+
+      console.log(payload);
     },
   });
 
