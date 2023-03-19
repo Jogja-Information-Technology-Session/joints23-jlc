@@ -1,8 +1,12 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+<<<<<<< HEAD
 import Image from "next/image";
 import Hero from "~/components/homepage/Hero";
 import PreExamNavbar from "~/components/preExamNavbar";
+=======
+import Link from "next/link";
+>>>>>>> a0de4748ce263531f5a0bdba0546142f002159e1
 
 const Home: NextPage = () => {
   return (
@@ -74,6 +78,10 @@ const Home: NextPage = () => {
               </div>
             ))}
           </div>
+<<<<<<< HEAD
+=======
+          <p className="text-2xl text-white">{"Loading tRPC query..."}</p>
+>>>>>>> a0de4748ce263531f5a0bdba0546142f002159e1
         </div>
       </section>
     </>
