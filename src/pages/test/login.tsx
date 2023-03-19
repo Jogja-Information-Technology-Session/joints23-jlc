@@ -4,9 +4,11 @@ import { api, setToken } from "~/utils/api";
 
 const Login: NextPage = () => {
   const login = api.user.login.useMutation({
-    onSuccess: (accessToken: string) => {
+    onSuccess: (payload) => {
+      const { accessToken } = payload;
+
       setToken(accessToken);
-      console.log(accessToken);
+      console.log(payload);
     },
   });
 

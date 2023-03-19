@@ -15,20 +15,16 @@ const CreateExam: NextPage = () => {
     console.log("refreshed");
   };
 
-  const createExam = api.exam.createWarmUpExam.useMutation({
+  const createExam = api.exam.createExam.useMutation({
     onSuccess: () => {
       console.log("success");
     },
   });
 
-  const getQuestions = api.exam.getWarmUpExamQuestions.useQuery(undefined, {
-    onSuccess: (data) => {
-      console.log(data);
-    },
-  });
-
   const handleCreateExam = () => {
-    createExam.mutate();
+    createExam.mutate({
+      examType: "WARM_UP",
+    });
   };
 
   return (
@@ -37,20 +33,6 @@ const CreateExam: NextPage = () => {
       <br />
       <button onClick={handleCreateExam}>Create Exam</button>
       <br />
-      <button
-        onClick={() => {
-          getQuestions
-            .refetch()
-            .then((data) => {
-              console.log(data);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }}
-      >
-        Get Questions
-      </button>
     </>
   );
 };

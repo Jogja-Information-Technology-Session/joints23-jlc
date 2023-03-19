@@ -15,12 +15,13 @@ const addUser: NextPage = () => {
     console.log("refreshed");
   };
 
-  const addQuestion = api.question.inputQuestion.useMutation({
-    onSuccess: () => {
-      console.log("success");
-    },
-  });
+  // const addQuestion = api.question.inputQuestion.useMutation({
+  //   onSuccess: () => {
+  //     console.log("success");
+  //   },
+  // });
 
+  // get all question
   const questions = api.question.getAll.useQuery(undefined, {
     onError: (error) => {
       if (error.message === "UNAUTHORIZED") {
@@ -35,7 +36,28 @@ const addUser: NextPage = () => {
       }
     },
     enabled: false,
+    retry: 0,
   });
+
+  const questionsStatus = api.exam.getExamQuestionStatus.useQuery(
+    { examType: "WARM_UP" },
+    {
+      onError: (error) => {
+        if (error.message === "UNAUTHORIZED") {
+          refreshToken
+            .mutateAsync()
+            .then(() => {
+              void questionsStatus.refetch();
+            })
+            .catch(() => {
+              console.log("error");
+            });
+        }
+      },
+      retry: 0,
+      enabled: false,
+    }
+  );
 
   const handleGet = () => {
     questions
@@ -51,8 +73,7 @@ const addUser: NextPage = () => {
   return (
     <>
       <button onClick={handleRefresh}>RefreshToken</button>
-      <img src="https://drive.google.com/uc?export=view&id=1rH8GNTqmxpqYqWY-6h4zAIrQADi1SOwO" />
-      <button onClick={() => addQuestion.mutate()}>add question</button>
+      {/* <button onClick={() => addQuestion.mutate()}>add question</button> */}
       <br />
       {/* <button onClick={handleGetQuestion}>get questions</button> */}
       <button
@@ -62,8 +83,23 @@ const addUser: NextPage = () => {
       >
         get questions
       </button>
-
-      <button onClick={handleGet}>get once questions</button>
+      <br />
+      <button onClick={handleGet}>get questions</button>
+      <br />
+      <button
+        onClick={() => {
+          questionsStatus
+            .refetch()
+            .then((res) => {
+              console.log(res.data);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }}
+      >
+        get all question status
+      </button>
     </>
   );
 };

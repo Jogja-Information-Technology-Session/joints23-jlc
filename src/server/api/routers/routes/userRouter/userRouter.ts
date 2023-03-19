@@ -9,6 +9,7 @@ import { refreshToken } from "./refreshToken";
 
 export const userRouter = createTRPCRouter({
   createUser: adminProcedure
+    // TODO: delete later
     .input(
       z.object({
         username: z.string().min(3).max(20),
