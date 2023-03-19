@@ -41,6 +41,7 @@ export const getExamQuestion = privateProcedure
 
     return {
       id: examQuestion.id,
+      image: examQuestion.question.image,
       index: examQuestion.order,
       question: examQuestion.question.question,
       options: options,

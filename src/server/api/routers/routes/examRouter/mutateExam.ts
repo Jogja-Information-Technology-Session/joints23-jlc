@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 
 import { ExamType, ExamStatus, type Question } from "@prisma/client";
 import { getUserId } from "~/server/api/services/authService";
+import { gradeExam } from "~/server/api/services/examService";
 
 export const createExam = privateProcedure
   .input(
@@ -118,7 +119,7 @@ export const submitExam = privateProcedure
       });
 
     // set exam status to submitted
-    const updatedExam = await ctx.prisma.exam.update({
+    await ctx.prisma.exam.update({
       where: {
         id: exam.id,
       },
@@ -126,6 +127,9 @@ export const submitExam = privateProcedure
         status: ExamStatus.SUBMITTED,
       },
     });
+
+    // grade exam
+    const updatedExam = await gradeExam(exam, ctx.prisma);
 
     return updatedExam;
   });
