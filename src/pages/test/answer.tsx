@@ -17,7 +17,7 @@ const Answer: NextPage = () => {
 
   // get warm up question by index (private)
   const question = api.exam.getExamQuestion.useQuery(
-    { index: 10, examType: "WARM_UP" },
+    { index: 0, examType: "WARM_UP" },
     {
       onError: (error) => {
         if (error.message === "UNAUTHORIZED") {
@@ -89,6 +89,12 @@ const Answer: NextPage = () => {
             console.log("error");
           });
       }
+    },
+  });
+
+  const submitExam = api.exam.submitExam.useMutation({
+    onSuccess: () => {
+      console.log("success");
     },
   });
 
@@ -180,6 +186,16 @@ const Answer: NextPage = () => {
         }}
       >
         flag question
+      </button>
+      <br />
+      <button
+        onClick={() => {
+          submitExam.mutate({
+            examType: "WARM_UP",
+          });
+        }}
+      >
+        submit exam
       </button>
     </>
   );

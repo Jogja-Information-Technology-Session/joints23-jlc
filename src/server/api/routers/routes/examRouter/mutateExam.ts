@@ -85,3 +85,47 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffledArray.filter((item): item is T => typeof item !== "undefined");
 }
+
+export const submitExam = privateProcedure
+  .input(
+    z.object({
+      examType: z.nativeEnum(ExamType),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    // get user Id
+    const userId = await getUserId(ctx.tokenData, ctx.prisma);
+
+    // find exam by user id and type
+    const exam = await ctx.prisma.exam.findFirst({
+      where: {
+        userID: userId,
+        type: input.examType,
+      },
+    });
+
+    if (!exam)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "You don't have this exam!",
+      });
+
+    // check exam status
+    if (exam.status !== ExamStatus.NOT_STARTED)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "You can't submit this exam!",
+      });
+
+    // set exam status to submitted
+    const updatedExam = await ctx.prisma.exam.update({
+      where: {
+        id: exam.id,
+      },
+      data: {
+        status: ExamStatus.SUBMITTED,
+      },
+    });
+
+    return updatedExam;
+  });
