@@ -28,7 +28,7 @@ export default function PreExamNavbar() {
   };
 
   return (
-    <nav className="relative mb-[8vh] flex w-full flex-col">
+    <nav className="relative flex w-full flex-col">
       <div
         className={`${
           isNavbarOpen ? "shadow-lg" : "shadow-none"
