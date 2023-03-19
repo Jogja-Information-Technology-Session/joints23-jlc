@@ -3,6 +3,7 @@ import {
   type PrismaClient,
   type Option,
   ExamStatus,
+  type Exam,
 } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
@@ -104,10 +105,32 @@ export async function getShuffledOptions(
   return shuffledOptions;
 }
 
-export function checkExamStatus(status: ExamStatus) {
-  if (status === ExamStatus.SUBMITTED)
+export function checkExamStatus(exam: Exam) {
+  if (exam.status === ExamStatus.SUBMITTED)
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Exam already submitted!",
     });
+
+  const currentTime = new Date().getTime();
+
+  // Check if current time is greater than start time
+  if (currentTime < exam.startTime.getTime())
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Exam has not started yet!",
+    });
+
+  // Check if current time is less than end time
+  if (currentTime > exam.endTime.getTime())
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Exam has already ended!",
+    });
+}
+
+export function getTimeRemaining(exam: Exam) {
+  const currentTime = new Date().getTime();
+  const timeRemaining = exam.endTime.getTime() - currentTime;
+  return timeRemaining; // in milliseconds
 }

@@ -10,6 +10,7 @@ import {
   getExamByUserId,
   getExamQuestionByIndex,
   getShuffledOptions,
+  getTimeRemaining,
 } from "~/server/api/services/examService";
 
 export const getExamQuestion = privateProcedure
@@ -22,7 +23,7 @@ export const getExamQuestion = privateProcedure
     const exam = await getExamByUserId(userId, examType, ctx.prisma);
 
     // check exam status
-    checkExamStatus(exam.status);
+    checkExamStatus(exam);
 
     // get exam question
     const examQuestion = await getExamQuestionByIndex(
@@ -44,6 +45,7 @@ export const getExamQuestion = privateProcedure
       question: examQuestion.question.question,
       options: options,
       answer: examQuestion.answerID,
+      timeRemaining: getTimeRemaining(exam),
     };
   });
 
@@ -58,7 +60,7 @@ export const getExamQuestionStatus = privateProcedure
     const exam = await getExamByUserId(userId, examType, ctx.prisma);
 
     // check exam status
-    checkExamStatus(exam.status);
+    checkExamStatus(exam);
 
     // get all exam questions status
     const examQuestionsStatus = await getAllExamQuestionsStatus(
@@ -66,7 +68,10 @@ export const getExamQuestionStatus = privateProcedure
       ctx.prisma
     );
 
-    return examQuestionsStatus;
+    return {
+      examQuestionsStatus: examQuestionsStatus,
+      timeRemaining: getTimeRemaining(exam),
+    };
   });
 
 // TODO: dev only, delete later

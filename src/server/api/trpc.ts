@@ -151,7 +151,9 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+
 // "privateProcedure" that requires a user to be logged in
 export const privateProcedure = t.procedure.use(isAuthed);
+
 // "adminProcedure" that requires a user to be logged in and have admin role
 export const adminProcedure = t.procedure.use(isAdmin);
