@@ -55,5 +55,8 @@ export const login = publicProcedure
       `jid=${refreshToken}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24 * 1}`,
     ]);
 
-    return accessToken;
+    return {
+      accessToken: accessToken,
+      username: user.username,
+    };
   });
