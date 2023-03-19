@@ -41,6 +41,5 @@ export const refreshToken = publicProcedure.mutation(async ({ ctx }) => {
     return accessToken;
   } catch (error) {
     throw new TRPCError({ code: "FORBIDDEN" });
-    // return null;
   }
 });
