@@ -7,6 +7,7 @@ import {
 } from "react-icons/io5";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import PreExamDropdown from "./preExamDropdown";
 
 export default function PreExamNavbar() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function PreExamNavbar() {
           isNavbarOpen ? "shadow-lg" : "shadow-none"
         } absolute top-0 z-20 flex w-full justify-center bg-[#E6EAED] transition duration-500`}
       >
-        <div className="flex h-[8vh] w-[85%] items-center justify-between lg:h-16 lg:w-3/4">
+        <div className="flex h-[8vh] w-[85%] items-center justify-between lg:h-16 lg:w-[85%]">
           <Link href="/">
             <div className="flex items-center space-x-4">
               <svg
@@ -235,16 +236,17 @@ export default function PreExamNavbar() {
             )}
           </button>
           <div className="hidden items-center space-x-8 lg:flex">
+            <PreExamDropdown />
             <p>|</p>
             <p className="font-medium">Nama Tim</p>
             <button
               onClick={() => {
                 handleLogout();
               }}
-              className="flex items-center space-x-2 rounded-lg bg-[#E65251] py-2 px-6 font-semibold text-white transition duration-200 hover:bg-[#C94545]"
+              className="flex items-center space-x-2 rounded-lg bg-[#E65251] py-2 px-4 font-semibold text-white transition duration-200 hover:bg-[#C94545]"
             >
               <IoLogOutOutline />
-              <p>Log out</p>
+              <p className="text-sm">Log out</p>
             </button>
           </div>
         </div>
