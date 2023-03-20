@@ -1,7 +1,6 @@
 import { Disclosure } from "@headlessui/react";
-import Image from "next/image";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
-import PreExamNavbar from "~/components/preExamNavbar";
+import PreExamNavbar from "~/components/preExam/preExamNavbar";
 
 const penyisihanMechanism = [
   "Tahap penyisihan dilakukan secara daring pada tanggal 16 April 2023 melalui platform yang akan dikirimkan tautannya melalui email yang digunakan untuk pendaftaran.",

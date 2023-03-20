@@ -37,10 +37,12 @@ export const refreshToken = publicProcedure.mutation(async ({ ctx }) => {
         env.JWT_ACCESSTOKEN_SECRET,
         { expiresIn: "15m" }
       ) || "";
-    console.log("accessToken", accessToken);
-    return accessToken;
+
+    return {
+      accessToken: accessToken,
+      username: user.username,
+    };
   } catch (error) {
     throw new TRPCError({ code: "FORBIDDEN" });
-    // return null;
   }
 });

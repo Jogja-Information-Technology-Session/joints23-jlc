@@ -34,6 +34,7 @@ model Exam {
 model ExamQuestion {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   order       Int
+  isFlagged  Boolean @default(false)
   answerID    String? @db.ObjectId
   userAnswer  Option? @relation(fields: [answerID], references: [id])
   optionOrder Int[]   @default([0, 1, 2, 3, 4])

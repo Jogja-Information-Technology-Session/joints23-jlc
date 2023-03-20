@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { env } from "~/env.mjs";
 
 import { publicProcedure } from "~/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 
 export const login = publicProcedure
   .input(
@@ -20,12 +21,15 @@ export const login = publicProcedure
     });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new TRPCError({ code: "BAD_REQUEST", message: "User not found" });
     }
 
     const isValid = await bcrypt.compare(input.password, user.password);
     if (!isValid) {
-      throw new Error("Invalid password");
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Invalid password",
+      });
     }
 
     const accessToken =
@@ -51,5 +55,8 @@ export const login = publicProcedure
       `jid=${refreshToken}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24 * 1}`,
     ]);
 
-    return accessToken;
+    return {
+      accessToken: accessToken,
+      username: user.username,
+    };
   });
