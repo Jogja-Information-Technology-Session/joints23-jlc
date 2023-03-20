@@ -32,7 +32,7 @@ export default function PreExamNavbar() {
       <div
         className={`${
           isNavbarOpen ? "shadow-lg" : "shadow-none"
-        } absolute top-0 z-20 flex w-full justify-center bg-[#E6EAED] transition duration-500`}
+        } absolute top-0 z-50 flex w-full justify-center bg-[#E6EAED] transition duration-500`}
       >
         <div className="flex h-[8vh] w-[85%] items-center justify-between lg:h-16 lg:w-[85%]">
           <Link href="/">
@@ -252,7 +252,7 @@ export default function PreExamNavbar() {
         </div>
       </div>
       <div
-        className={`absolute z-10 flex w-full flex-col  items-start space-y-6 bg-[#F4F4F4] px-8 py-8 ${
+        className={`absolute z-40 flex w-full flex-col  items-start space-y-6 bg-[#F4F4F4] px-8 py-8 ${
           isNavbarOpen ? "translate-y-[8vh]" : "-translate-y-[100%]"
         } shadow-2xl transition duration-[700ms] lg:hidden`}
       >
