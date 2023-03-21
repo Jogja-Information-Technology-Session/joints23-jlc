@@ -8,6 +8,7 @@ import {
 import { useRouter } from "next/router";
 import { useState } from "react";
 import PreExamDropdown from "./preExamDropdown";
+import { TeamContext } from "~/utils/context/teamContext";
 
 export default function PreExamNavbar() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function PreExamNavbar() {
   };
 
   return (
-    <nav className="relative flex w-full flex-col">
+    <nav className="relative mb-16 flex w-full flex-col">
       <div
         className={`${
           isNavbarOpen ? "shadow-lg" : "shadow-none"
@@ -238,7 +239,11 @@ export default function PreExamNavbar() {
           <div className="hidden items-center space-x-8 lg:flex">
             <PreExamDropdown />
             <p>|</p>
-            <p className="font-medium">Nama Tim</p>
+            <TeamContext.Consumer>
+              {(value) => (
+                <p className="text-base font-medium">{value?.team}</p>
+              )}
+            </TeamContext.Consumer>
             <button
               onClick={() => {
                 handleLogout();
@@ -256,7 +261,9 @@ export default function PreExamNavbar() {
           isNavbarOpen ? "translate-y-[8vh]" : "-translate-y-[100%]"
         } shadow-2xl transition duration-[700ms] lg:hidden`}
       >
-        <p className="self-center">Nama Tim</p>
+        <TeamContext.Consumer>
+          {(value) => <p className="self-center">{value?.team}</p>}
+        </TeamContext.Consumer>
         <Link href="/warm-up" className="font-bold text-primary-dark">
           Warm Up
         </Link>

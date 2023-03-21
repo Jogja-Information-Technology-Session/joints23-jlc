@@ -1,7 +1,7 @@
 import { Disclosure } from "@headlessui/react";
 import Image from "next/image";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
-import PreExamNavbar from "~/components/preExamNavbar";
+import PreExamNavbar from "~/components/preExam/preExamNavbar";
 
 const warmUpMechanism = [
   "Tahap pemanasan dilakukan secara daring melalui platform yang akan diinfokan mendekati hari-H",

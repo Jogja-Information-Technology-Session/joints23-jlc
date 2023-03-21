@@ -4,7 +4,9 @@ import { api, setToken } from "../../utils/api";
 import Image from "next/image";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { TeamContext } from "~/utils/context/teamContext";
+import type { TeamContextType } from "~/utils/context/teamContext";
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string().required("*Required"),
@@ -14,12 +16,14 @@ const LoginSchema = Yup.object().shape({
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
+  const { setTeam } = useContext(TeamContext) as TeamContextType;
 
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (payload) => {
       if (!payload) return;
       const { accessToken, username } = payload;
 
+      setTeam(username);
       setToken(accessToken);
       void router.push("/");
     },
@@ -28,12 +32,14 @@ export default function LoginPage() {
   //refresh token upon page load (only once)
   useEffect(() => {
     refreshToken.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = api.user.login.useMutation({
     onSuccess: (payload) => {
       const { accessToken, username } = payload;
 
+      setTeam(username);
       setToken(accessToken);
       void router.push("/");
     },
