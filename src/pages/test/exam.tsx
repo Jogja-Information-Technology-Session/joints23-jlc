@@ -6,7 +6,7 @@ const addUser: NextPage = () => {
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (accessToken) => {
       if (!accessToken) return;
-      setToken(accessToken);
+      setToken(accessToken.accessToken);
     },
   });
 
@@ -81,7 +81,7 @@ const addUser: NextPage = () => {
           console.log(questions.data);
         }}
       >
-        get questions
+        ⊕
       </button>
       <br />
       <button onClick={handleGet}>get questions</button>
