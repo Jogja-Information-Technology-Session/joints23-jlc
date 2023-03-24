@@ -2,153 +2,85 @@ import { Disclosure } from "@headlessui/react";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 import PreExamNavbar from "~/components/preExam/preExamNavbar";
 
-const penyisihanMechanism = [
-  "Tahap penyisihan dilakukan secara daring pada tanggal 16 April 2023 melalui platform yang akan dikirimkan tautannya melalui email yang digunakan untuk pendaftaran.",
-  "Bentuk penyisihan adalah soal pilihan ganda berjumlah 40 butir soal. Cara menjawab adalah dengan memilih 1 jawaban di antara pilihan jawaban lain yang sudah disediakan. Tiap anggota dalam 1 tim hanya bisa mengerjakan menggunakan 1 device yang sama.",
-  "Tiap anggota dalam 1 tim harus berada di tempat yang sama.",
-  "Pengerjaan soal hanya bisa mengerjakan menggunakan 1 device yang sama.",
-  "Mekanisme pengerjaan dan waktu pengerjaan masing-masing soal akan dijelaskan lebih detail saat pelaksanaan perlombaan.",
-  "Total waktu penyisihan adalah 120 menit.",
-];
-
-const ketentuanLolos = [
-  "Tim tersebut termasuk dalam 10 tim yang memperoleh skor tertinggi pada babak penyisihan.",
-  "Sudah melakukan konfirmasi akan hadir pada babak final. Adapun mekanisme konfirmasi dapat dilakukan dengan menandatangani surat komitmen yang didapatkan dengan menunggu pesan konfirmasi dari Panitia.",
-  "Mengisi tautan konfirmasi kehadiran, selambat-lambatnya 3 × 24 jam setelah mendapat pesan konfirmasi dari panitia.",
-];
-
-const ketentuanDiskualifikasi = [
-  "Peserta bukan siswa/i SMA/sederajat di Indonesia.",
-  "Peserta terdaftar dalam lebih dari 1 tim.",
-  "Peserta dalam 1 tim tidak berasal dari institusi yang sama.",
-  "Tim tidak melengkapi syarat administrasi hingga batas waktu yang telah ditentukan.",
-  "Tim terindikasi melakukan kecurangan, baik bekerja sama dengan pihak di luar tim maupun memberikan jawaban terhadap tim lain.",
-  "Tim terlambat melakukan konfirmasi kehadiran pada tahap final.",
-  "Tim dengan sengaja melakukan sabotase atau perusakan pada sistem penjurian.",
+const guides = [
+  {
+    title: "Tata Cara Mengakses Soal Penyisihan",
+    guide: [
+      "Klik link (laman web)",
+      "Klik tombol `Login` yang ada pada Kanan Atas",
+      "Kemudian pilih opsi Login dengan Google",
+      "Masuk dengan akun Google yang telah diisikan pada formulir pendaftaran",
+      "Silakan pilih button dropdown `Competition`",
+      "Pilih course yang sesuai (warmup sama penyisihan)",
+      "Setelah paham dengan peraturan dan ketentuan yang ada, klik `Mulai kerjakan` dan kalian sudah berhasil masuk ke laman pengerjaan soal.",
+    ],
+  },
+  {
+    title: "Tata Cara Pengerjaan Soal",
+    guide: [
+      "Seluruh peserta bertanggung jawab penuh terhadap kesiapan koneksi internet dan perangkat yang digunakan untuk mengikuti babak penyisihan. Apabila terdapat kendala yang dialami peserta sehubungan dengan hal-hal tersebut, diharapkan untuk segera menghubungi narahubung tertera.",
+      "Tahap penyisihan dilakukan secara daring pada tanggal 16 April 2023 pukul 13.00 - 15.00 WIB melalui platform yang akan dikirimkan tautannya melalui email yang digunakan untuk pendaftaran.",
+      "Tiap anggota dalam 1 tim harus berada di tempat yang sama.",
+      "Pengerjaan soal hanya bisa mengerjakan menggunakan 1 device yang sama.",
+      "Peserta dilarang menanyakan hal apapun yang berkaitan dengan soal penyisihan JLC 2023 saat waktu pengerjaan masih berlangsung.",
+      "Total waktu penyisihan adalah 120 menit.",
+      "Bentuk penyisihan adalah soal pilihan ganda berjumlah 40 butir soal. Cara menjawab adalah dengan memilih 1 jawaban diantara pilihan jawaban lain yang sudah disediakan.",
+      "Penilaian pada babak ini dilakukan berdasarkan benar, tidak, atau kosongnya jawaban.\n Setiap soal dengan jawaban benar bernilai +4. \n Setiap soal dengan jawaban kosong bernilai 0. \n Setiap soal dengan jawaban salah bernilai -1.",
+      "Poin maksimal yang dapat diperoleh pada babak ini adalah 160.",
+      "Panitia berhak mendiskualifikasi peserta yang dianggap melakukan pelanggaran atau kecurangan selama pelaksanaan babak penyisihan.",
+      "Semua keputusan panitia adalah mutlak dan tidak dapat diganggu gugat.",
+    ],
+  },
 ];
 
 export default function PenyisihanPage() {
   return (
     <div className="relative min-h-screen w-screen">
-      <div className="flex min-h-screen h-full w-full flex-col z-20 items-center overflow-clip bg-[url('/preExam/bg_desktop_full.png')] bg-cover pb-12 lg:pb-24">
+      <div className="z-20 flex h-full min-h-screen w-full flex-col items-center overflow-clip bg-[url('/preExam/bg_desktop_full.png')] bg-cover pb-12 lg:pb-24">
         <PreExamNavbar />
         <h2 className="py-10 text-center text-2xl font-bold lg:py-16 lg:text-4xl">
           Penyisihan Joints Logic Competition
         </h2>
-        <div className="w-[90%] z-30 rounded-xl bg-[#F4F4F4] p-5 shadow-xl lg:w-3/4">
-          <Disclosure>
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
-                  <p className="text-lg font-semibold lg:text-xl">
-                    Mekanisme Penyisihan
-                  </p>
-                  {open ? (
-                    <IoChevronUp size={20} />
-                  ) : (
-                    <IoChevronDown size={20} />
+        <div className="z-30 flex w-[90%] flex-col space-y-6 rounded-xl bg-[#F4F4F4] p-5 shadow-xl lg:w-3/4">
+          {guides.map((guide, index) => {
+            return (
+              <div key={index}>
+                <Disclosure>
+                  {({ open }) => (
+                    <>
+                      <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
+                        <p className="text-lg font-semibold lg:text-xl">
+                          Mekanisme Penyisihan
+                        </p>
+                        {open ? (
+                          <IoChevronUp size={20} />
+                        ) : (
+                          <IoChevronDown size={20} />
+                        )}
+                      </Disclosure.Button>
+                      <Disclosure.Panel className="md:text-md px-2 pt-2 pb-2 text-sm text-gray-500">
+                        {guide.guide.map((penyisihan, index) => (
+                          <div className="flex w-full space-x-3" key={index}>
+                            <p>{`${index + 1}.`}</p>
+                            <p key={index} className="mb-2">
+                              {penyisihan}
+                            </p>
+                          </div>
+                        ))}
+                      </Disclosure.Panel>
+                    </>
                   )}
-                </Disclosure.Button>
-                <Disclosure.Panel className="md:text-md px-2 pt-2 pb-2 text-sm text-gray-500">
-                  {penyisihanMechanism.map((penyisihan, index) => (
-                    <div className="flex w-full space-x-3" key={index}>
-                      <p>{`${index + 1}.`}</p>
-                      <p key={index} className="mb-2">
-                        {penyisihan}
-                      </p>
-                    </div>
-                  ))}
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
-          <div className="my-4 h-[1px] w-full bg-primary-dark bg-opacity-20" />
-          <Disclosure as="div" className="mt-2">
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
-                  <p className="text-lg font-semibold lg:text-xl">
-                    Sistem Penilaian
-                  </p>
-                  {open ? (
-                    <IoChevronUp size={20} />
-                  ) : (
-                    <IoChevronDown size={20} />
-                  )}
-                </Disclosure.Button>
-                <Disclosure.Panel className="md:text-md px-2 pt-2 pb-2 text-sm text-gray-500">
-                  <p>Adapun sistem pembagian nilainya, yaitu:</p>
-                  <ul className="list-inside list-disc pt-1">
-                    <li>Benar +4</li>
-                    <li>Salah -1</li>
-                    <li>dan Kosong 0.</li>
-                  </ul>
-                  <p>Poin maksimal yang dapat diperoleh adalah 160.</p>
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
-          <div className="my-4 h-[1px] w-full bg-primary-dark bg-opacity-20" />
-          <Disclosure as="div" className="mt-2">
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
-                  <p className="text-lg font-semibold lg:text-xl">
-                    Ketentuan Lolos
-                  </p>
-                  {open ? (
-                    <IoChevronUp size={20} />
-                  ) : (
-                    <IoChevronDown size={20} />
-                  )}
-                </Disclosure.Button>
-                <Disclosure.Panel className="md:text-md px-2 pt-2 pb-2 text-sm text-gray-500">
-                  {ketentuanLolos.map((lolos, index) => (
-                    <div className="flex w-full space-x-3" key={index}>
-                      <p>{`${index + 1}.`}</p>
-                      <p key={index} className="mb-2">
-                        {lolos}
-                      </p>
-                    </div>
-                  ))}
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
-          <div className="my-4 h-[1px] w-full bg-primary-dark bg-opacity-20" />
-          <Disclosure as="div" className="mt-2">
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
-                  <p className="text-lg font-semibold lg:text-xl">
-                    Ketentuan Diskualifikasi
-                  </p>
-                  {open ? (
-                    <IoChevronUp size={20} />
-                  ) : (
-                    <IoChevronDown size={20} />
-                  )}
-                </Disclosure.Button>
-                <Disclosure.Panel className="md:text-md px-2 pt-2 pb-2 text-sm text-gray-500">
-                  {ketentuanDiskualifikasi.map((diskualifikasi, index) => (
-                    <div className="flex w-full space-x-3" key={index}>
-                      <p>{`${index + 1}.`}</p>
-                      <p key={index} className="mb-2">
-                        {diskualifikasi}
-                      </p>
-                    </div>
-                  ))}
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
+                </Disclosure>
+              </div>
+            );
+          })}
         </div>
-        <button className="mt-12 z-30 rounded-md bg-primary-dark px-6 py-2.5 font-medium text-white">
+        <button className="z-30 mt-12 rounded-md bg-primary-dark px-6 py-2.5 font-medium text-white">
           Mulai Penyisihan
         </button>
       </div>
       <svg
-        className="w-full absolute bottom-0 z-10"
+        className="absolute bottom-0 z-10 w-full"
         viewBox="0 0 1440 478"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

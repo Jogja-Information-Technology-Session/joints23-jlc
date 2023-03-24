@@ -3,10 +3,15 @@ import Image from "next/image";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 import PreExamNavbar from "~/components/preExam/preExamNavbar";
 
-const warmUpMechanism = [
-  "Tahap pemanasan dilakukan secara daring melalui platform yang akan diinfokan mendekati hari-H",
-  "Tautan untuk tahap pemanasan pra-lomba ini hanya akan tersedia pada tanggal 9 April 2023 yang waktunya akan diinformasikan kemudian. Dalam rentang waktu yang ditentukan tersebut, setiap tim dapat mencoba mengerjakan soal yang disediakan, dan apabila terdapat kesulitan dipersilakan untuk bertanya melalui narahubung yang tertera",
-  "Hasil dari babak ini tidak mempengaruhi hasil dari babak penyisihan, namun sangat disarankan untuk mencoba environment dan sistem penilaian yang ada.",
+const guides = [
+  {
+    title: "Tata Cara Pengerjaan Soal (Warmup)",
+    guide: [
+      "Seluruh peserta bertanggung jawab penuh terhadap kesiapan koneksi internet dan perangkat yang digunakan. Apabila terdapat kendala yang dialami peserta sehubungan dengan hal-hal tersebut, diharapkan untuk segera menghubungi narahubung tertera.",
+      "Tautan untuk tahap pemanasan pra-lomba ini hanya akan tersedia pada tanggal 9 April 2023 pada pukul 13.00 - 15.00 WIB. Dalam rentang waktu yang ditentukan tersebut, setiap tim dapat mencoba mengerjakan soal yang disediakan, dan apabila terdapat kendala dalam pengerjaan dipersilakan untuk bertanya melalui narahubung yang tertera.",
+      "Hasil dari babak ini tidak mempengaruhi hasil dari babak penyisihan, namun sangat disarankan untuk mencoba environment dan sistem penilaian yang ada.",
+    ],
+  },
 ];
 
 export default function WarmUpPage() {
@@ -18,58 +23,38 @@ export default function WarmUpPage() {
           Warm Up Joints Logic Competition
         </h2>
         <div className="w-[90%] rounded-xl bg-[#F4F4F4] p-5 shadow-xl lg:w-3/4">
-          <Disclosure>
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
-                  <p className="text-lg font-semibold lg:text-xl">
-                    Mekanisme Warm-up
-                  </p>
-                  {open ? (
-                    <IoChevronUp size={20} />
-                  ) : (
-                    <IoChevronDown size={20} />
+          {guides.map((guide, index) => {
+            return (
+              <div key={index} className="mt-4">
+                <Disclosure>
+                  {({ open }) => (
+                    <>
+                      <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
+                        <p className="text-lg font-semibold lg:text-xl">
+                          Mekanisme Warm-up
+                        </p>
+                        {open ? (
+                          <IoChevronUp size={20} />
+                        ) : (
+                          <IoChevronDown size={20} />
+                        )}
+                      </Disclosure.Button>
+                      <Disclosure.Panel className="md:text-md px-2 pt-2 pb-2 text-sm text-gray-500">
+                        {guide.guide.map((mechanism, index) => (
+                          <div className="flex w-full space-x-3" key={index}>
+                            <p>{`${index + 1}.`}</p>
+                            <p key={index} className="mb-2">
+                              {mechanism}
+                            </p>
+                          </div>
+                        ))}
+                      </Disclosure.Panel>
+                    </>
                   )}
-                </Disclosure.Button>
-                <Disclosure.Panel className="md:text-md px-2 pt-2 pb-2 text-sm text-gray-500">
-                  {warmUpMechanism.map((mechanism, index) => (
-                    <div className="flex w-full space-x-3" key={index}>
-                      <p>{`${index + 1}.`}</p>
-                      <p key={index} className="mb-2">
-                        {mechanism}
-                      </p>
-                    </div>
-                  ))}
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
-          <div className="my-4 h-[1px] w-full bg-primary-dark bg-opacity-20" />
-          <Disclosure as="div" className="mt-2">
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
-                  <p className="text-lg font-semibold lg:text-xl">
-                    Sistem Penilaian
-                  </p>
-                  {open ? (
-                    <IoChevronUp size={20} />
-                  ) : (
-                    <IoChevronDown size={20} />
-                  )}
-                </Disclosure.Button>
-                <Disclosure.Panel className="md:text-md px-2 pt-2 pb-2 text-sm text-gray-500">
-                  <p>Adapun sistem pembagian nilainya, yaitu:</p>
-                  <ul className="list-inside list-disc pt-1">
-                    <li>Benar +4</li>
-                    <li>Salah -1</li>
-                    <li>dan Kosong 0.</li>
-                  </ul>
-                  <p>Poin maksimal yang dapat diperoleh adalah 160.</p>
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
+                </Disclosure>
+              </div>
+            );
+          })}
         </div>
         <button className="mt-12 rounded-md bg-primary-dark px-6 py-2.5 font-medium text-white">
           Mulai Warm-Up
