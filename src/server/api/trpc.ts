@@ -19,7 +19,6 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "~/server/db";
 
 import jwt from "jsonwebtoken";
-import { env } from "~/env.mjs";
 
 type CreateContextOptions = Record<string, never>;
 
@@ -58,7 +57,8 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
       return null;
     }
 
-    const payload = jwt.verify(token, env.JWT_ACCESSTOKEN_SECRET);
+    const payload = jwt.decode(token);
+    // verified later in private procedure
 
     if (!payload || typeof payload === "string") return null;
 
@@ -151,7 +151,9 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+
 // "privateProcedure" that requires a user to be logged in
 export const privateProcedure = t.procedure.use(isAuthed);
+
 // "adminProcedure" that requires a user to be logged in and have admin role
 export const adminProcedure = t.procedure.use(isAdmin);

@@ -3,8 +3,74 @@ import {
   type PrismaClient,
   type Option,
   ExamStatus,
+  type Exam,
 } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+
+export async function gradeExam(exam: Exam, prisma: PrismaClient) {
+  // get exam questions
+  const examQuestions = await prisma.examQuestion.findMany({
+    where: {
+      examID: exam.id,
+    },
+  });
+
+  if (!examQuestions || examQuestions.length === 0)
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to get exam questions!",
+    });
+
+  // grade exam
+  let score = 0;
+  // for each exam question get the option and check if it is correct
+  for (const examQuestion of examQuestions) {
+    const optionId = examQuestion.answerID;
+
+    if (!optionId) {
+      // 0 points for unanswered questions
+      continue;
+    }
+
+    const option = await prisma.option.findUnique({
+      where: {
+        id: optionId,
+      },
+    });
+
+    if (!option)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to get option!",
+      });
+
+    if (option.isCorrect) {
+      // 4 points for correct answer
+      score += 4;
+    } else {
+      // -1 point for incorrect answer
+      score -= 1;
+    }
+  }
+
+  const gradedExam = await prisma.exam.update({
+    where: {
+      id: exam.id,
+    },
+    data: {
+      score: score,
+      status: ExamStatus.GRADED,
+    },
+  });
+
+  if (!gradedExam)
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to grade exam!",
+    });
+
+  return gradedExam;
+}
 
 export async function getExamByUserId(
   userId: string,
@@ -104,10 +170,32 @@ export async function getShuffledOptions(
   return shuffledOptions;
 }
 
-export function checkExamStatus(status: ExamStatus) {
-  if (status === ExamStatus.SUBMITTED)
+export function checkExamStatus(exam: Exam) {
+  if (exam.status === ExamStatus.SUBMITTED)
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Exam already submitted!",
     });
+
+  const currentTime = new Date().getTime();
+
+  // Check if current time is greater than start time
+  if (currentTime < exam.startTime.getTime())
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Exam has not started yet!",
+    });
+
+  // Check if current time is less than end time
+  if (currentTime > exam.endTime.getTime())
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Exam has already ended!",
+    });
+}
+
+export function getTimeRemaining(exam: Exam) {
+  const currentTime = new Date().getTime();
+  const timeRemaining = exam.endTime.getTime() - currentTime;
+  return timeRemaining; // in milliseconds
 }

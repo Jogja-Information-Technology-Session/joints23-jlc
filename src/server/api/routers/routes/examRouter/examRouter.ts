@@ -4,12 +4,12 @@ import {
   getWarmUpExamQuestions,
   getExamQuestion,
   getExamQuestionStatus,
-} from "./getExamQuestion";
+} from "./queryExamQuestion";
 import {
   clearAnswer,
   setAnswer,
   toggleFlagQuestion,
-} from "./updateExamQuestion";
+} from "./mutateExamQuestion";
 
 export const examRouter = createTRPCRouter({
   createExam,

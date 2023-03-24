@@ -92,6 +92,7 @@ enum ExamStatus {
   NOT_STARTED
   STARTED
   SUBMITTED
+  GRADED
 }
 
 enum ExamType {
