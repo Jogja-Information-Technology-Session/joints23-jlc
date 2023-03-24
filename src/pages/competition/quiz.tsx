@@ -6,6 +6,11 @@ import {
   IoChevronForward,
   IoClose,
 } from "react-icons/io5";
+import "katex/dist/katex.min.css";
+import Latex from "react-latex-next";
+import Countdown from "react-countdown";
+import type { CountdownRendererFn } from "react-countdown";
+
 import { TeamContext } from "~/utils/context/teamContext";
 
 export default function QuizPage() {
@@ -16,9 +21,25 @@ export default function QuizPage() {
     setChosen(value);
   };
 
-  const options = ["Ans1", "Ans2", "Ans3", "Ans4", "Ans5"];
+  // Assume that the deadline timestamp is received from the server and stored in a variable
+  // Set the deadline to one minute from now
+  const deadline = new Date();
+  deadline.setMinutes(deadline.getMinutes() + 1);
 
-  console.log(chosen);
+  // Calculate the remaining time in milliseconds
+  const remainingTime = deadline.getTime() - Date.now();
+
+  // Define a renderer function to format the countdown
+  const renderer: CountdownRendererFn = ({ hours, minutes, seconds }) => (
+    <span>
+      {hours.toString().padStart(2, "0")}:{minutes.toString().padStart(2, "0")}:
+      {seconds.toString().padStart(2, "0")}
+    </span>
+  );
+
+  const options = ["84", "96", "210", "900,000", "100,000"];
+  const sampleQuestion = `Banyaknya bilangan asli 6 digit $\\overline{\\mathrm{joints}}$ sehingga $j > o > i > n > t > s$ adalah…`;
+
   return (
     <div className="relative h-screen overflow-clip">
       {/* Nav Desktop */}
@@ -215,7 +236,12 @@ export default function QuizPage() {
           <p>|</p>
           <div className="flex space-x-3">
             <IoTime size={24} className="fill-primary-dark" />
-            <p className="font-medium">01:31:59</p>
+            <p className="font-medium">
+              <Countdown
+                date={Date.now() + remainingTime}
+                renderer={renderer}
+              />
+            </p>
           </div>
         </div>
       </nav>
@@ -405,7 +431,9 @@ export default function QuizPage() {
         </svg>
         <div className="flex space-x-3">
           <IoTime size={24} className="fill-primary-dark" />
-          <p className="font-medium">01:31:59</p>
+          <p className="font-medium">
+            <Countdown date={Date.now() + remainingTime} renderer={renderer} />
+          </p>
         </div>
         <button
           onClick={() => {
@@ -1270,13 +1298,8 @@ export default function QuizPage() {
             height={400}
             width={300}
           />
-          <p className="text-sm leading-relaxed">
-            Horem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu
-            turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus
-            nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum
-            tellus elit sed risus. Maecenas eget condimentum velit, sit amet
-            feugiat lectus. Class aptent taciti sociosqu ad litora torquent per
-            conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus
+          <p className="pt-1 text-start text-sm">
+            <Latex>{sampleQuestion}</Latex>
           </p>
           <div className="flex w-full flex-col space-y-4">
             {options.map((option, index) => (
@@ -1306,7 +1329,9 @@ export default function QuizPage() {
                       : "E"}
                   </div>
                 </div>
-                <p className="pt-1 text-start text-sm">{option}</p>
+                <p className="pt-1 text-start text-sm">
+                  <Latex>{option}</Latex>
+                </p>
               </button>
             ))}
           </div>
@@ -1344,13 +1369,7 @@ export default function QuizPage() {
               width={300}
             />
             <p className="text-md leading-relaxed">
-              Horem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu
-              turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus
-              nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum
-              tellus elit sed risus. Maecenas eget condimentum velit, sit amet
-              feugiat lectus. Class aptent taciti sociosqu ad litora torquent
-              per conubia nostra, per inceptos himenaeos. Praesent auctor purus
-              luctus
+              <Latex>{sampleQuestion}</Latex>
             </p>
             <div className="flex w-full flex-col space-y-4">
               {options.map((option, index) => (
@@ -1380,7 +1399,9 @@ export default function QuizPage() {
                         : "E"}
                     </div>
                   </div>
-                  <p className="text-md pt-0.5 text-start">{option}</p>
+                  <p className="text-md pt-0.5 text-start">
+                    <Latex>{option}</Latex>
+                  </p>
                 </button>
               ))}
             </div>
