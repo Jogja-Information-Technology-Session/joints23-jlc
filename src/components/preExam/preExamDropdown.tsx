@@ -14,11 +14,7 @@ export default function PreExamDropdown() {
     {
       path: "/penyisihan",
       title: "Penyisihan",
-    },
-    {
-      path: "/competition",
-      title: "Competition",
-    },
+    }
   ];
 
   return (
@@ -33,7 +29,7 @@ export default function PreExamDropdown() {
               ) : router.pathname == "/penyisihan" ? (
                 <p>Penyisihan</p>
               ) : (
-                <p>Competition</p>
+                <p>Pilih exam</p>
               )}
             </div>
             <IoCaretDown size={12} className="ml-2" />

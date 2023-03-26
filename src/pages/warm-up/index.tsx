@@ -1,7 +1,13 @@
 import { Disclosure } from "@headlessui/react";
 import Image from "next/image";
+import router from "next/router";
+import { useContext, useEffect } from "react";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
+
 import PreExamNavbar from "~/components/preExam/preExamNavbar";
+import { api, setToken } from "~/utils/api";
+import { TeamContext } from "~/utils/context/teamContext";
+import type { TeamContextType } from "~/utils/context/teamContext";
 
 const guides = [
   {
@@ -15,6 +21,30 @@ const guides = [
 ];
 
 export default function WarmUpPage() {
+  const { setTeam } = useContext(TeamContext) as TeamContextType;
+
+  const refreshToken = api.user.refreshToken.useMutation({
+    onSuccess: (payload) => {
+      if (!payload) {
+        void router.push("/auth/login");
+      } else {
+        const { accessToken, username } = payload;
+
+        setTeam(username);
+        setToken(accessToken);
+      }
+    },
+    onError: () => {
+      void router.push("/auth/login");
+    },
+  });
+
+  //refresh token upon page load (only once)
+  useEffect(() => {
+    refreshToken.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="relative h-screen w-screen overflow-hidden">
       <div className="flex h-full w-full flex-col items-center">
@@ -31,7 +61,7 @@ export default function WarmUpPage() {
                     <>
                       <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
                         <p className="text-lg font-semibold lg:text-xl">
-                          Mekanisme Warm-up
+                          {guide.title}
                         </p>
                         {open ? (
                           <IoChevronUp size={20} />

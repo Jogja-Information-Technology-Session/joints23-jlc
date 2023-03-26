@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   IoTime,
   IoChevronBack,
@@ -12,13 +12,17 @@ import Countdown from "react-countdown";
 import type { CountdownRendererFn } from "react-countdown";
 
 import { TeamContext } from "~/utils/context/teamContext";
-import { api } from "~/utils/api";
+import type { TeamContextType } from "~/utils/context/teamContext";
+import { api, setToken } from "~/utils/api";
 import useExam from "~/hooks/useExam";
+import Link from "next/link";
+import router from "next/router";
 
 export default function QuizPage() {
   const [index, setIndex] = useState(0);
   const [remainingTime, setRemainingTime] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { setTeam } = useContext(TeamContext) as TeamContextType;
 
   const { questionQuery, questionStatusQuery, answer, flag } = useExam(index);
 
@@ -41,6 +45,28 @@ export default function QuizPage() {
     });
   };
 
+  const refreshToken = api.user.refreshToken.useMutation({
+    onSuccess: (payload) => {
+      if (!payload) {
+        void router.push("/auth/login");
+      } else {
+        const { accessToken, username } = payload;
+
+        setTeam(username);
+        setToken(accessToken);
+      }
+    },
+    onError: () => {
+      void router.push("/auth/login");
+    },
+  });
+
+  //refresh token upon page load (only once)
+  useEffect(() => {
+    refreshToken.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (questionQuery.data) setRemainingTime(questionQuery.data.timeRemaining);
   }, [questionQuery.data]);
@@ -57,7 +83,7 @@ export default function QuizPage() {
     <div className="relative h-screen overflow-clip">
       {/* Nav Desktop */}
       <nav className="z-50 hidden h-[8vh] w-full items-center justify-between bg-[#E6EAED] px-14 shadow-md lg:flex">
-        <div className="flex items-center space-x-4">
+        <Link href="/" className="flex items-center space-x-4">
           <svg
             className="w-7"
             viewBox="0 0 24 24"
@@ -239,7 +265,7 @@ export default function QuizPage() {
             />
           </svg>
           <b className="text-lg">Joints Logic Competition</b>
-        </div>
+        </Link>
         <div className="flex items-center space-x-4">
           <TeamContext.Consumer>
             {(value) => (
@@ -262,187 +288,189 @@ export default function QuizPage() {
 
       {/* Nav Mobile */}
       <nav className="flex h-[7vh] w-full items-center justify-between bg-[#E6EAED] px-5 shadow-md lg:hidden">
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle cx="12" cy="12" r="12" fill="#223144" />
-          <path
-            d="M13.074 17.2561H13.6304L15.2031 19.2401L14.7031 19.6664L13.074 17.2561Z"
-            fill="#B72C2C"
-          />
-          <path
-            d="M13.6304 17.2561L14.8967 17.3206L16.3402 19.5061L15.2031 19.2401L13.6304 17.2561Z"
-            fill="#AA1B1B"
-          />
-          <path
-            d="M14.7031 19.6664L15.8887 19.8609L16.3403 19.506L15.2031 19.24L14.7031 19.6664Z"
-            fill="#D84545"
-          />
-          <path
-            d="M12.2944 17.1996L13.074 17.256H13.6304L14.8967 17.3205L15.4988 17.3448L16.3403 16.2748L13.8644 15.85L13.3859 15.4629L12.2944 17.1996Z"
-            fill="#CC3737"
-          />
-          <path
-            d="M12.2944 17.1996L10.9717 15.5973L11.8643 14.6941L13.3859 15.4629L12.2944 17.1996Z"
-            fill="#E65251"
-          />
-          <path
-            d="M16.3402 16.2748L14.3172 15.1134L11.8643 14.6941L13.3858 15.4629L13.8643 15.8501L16.3402 16.2748Z"
-            fill="#D84545"
-          />
-          <path
-            d="M16.3403 16.275L17.2892 16.5007L17.3754 13.1564L16.3403 12.7048L14.3174 15.1136L16.3403 16.275Z"
-            fill="#E76A72"
-          />
-          <path
-            d="M17.2891 16.5005C17.2891 16.5005 19.0634 15.167 19.1817 15.0702C19.3001 14.9735 19.8485 14.1778 19.8485 14.1778L17.3753 13.1562L17.2893 16.5005H17.2891Z"
-            fill="#AA1B1B"
-          />
-          <path
-            d="M17.2891 16.5006L19.0313 15.6618L19.1817 15.0706L17.2891 16.5006Z"
-            fill="#D84545"
-          />
-          <path
-            d="M6.55762 13.0867L7.50922 15.0706L7.12207 15.7855L8.54157 16.4039L8.65441 14.3286L6.55762 13.0867Z"
-            fill="#E76A72"
-          />
-          <path
-            d="M7.1221 15.7855L6.55765 15.463L6.38013 14.7452L6.55765 13.0867L7.50926 15.0706L7.1221 15.7855Z"
-            fill="#E65251"
-          />
-          <path
-            d="M7.71606 16.0444L7.9929 16.9417C7.9929 16.9417 9.5413 17.5224 9.52524 17.474C9.50919 17.4256 9.20253 16.2749 9.20253 16.2749L8.5413 16.4041L7.71606 16.0447V16.0444Z"
-            fill="#CC3737"
-          />
-          <path
-            d="M8.5415 16.4039L9.20274 16.275L10.3803 15.947L10.9716 14.2156L8.65435 14.3286L8.5415 16.4039Z"
-            fill="#E65251"
-          />
-          <path
-            d="M10.3804 15.9469L10.9719 15.5974L11.8643 14.6942L13.3859 13.3286L15.8464 12.4091C15.8464 12.4091 14.4774 12.2639 14.429 12.2639C14.3806 12.2639 10.9719 14.2155 10.9719 14.2155L10.3804 15.9467V15.9469Z"
-            fill="#CC3737"
-          />
-          <path
-            d="M9.20288 16.2749L10.3804 15.947L10.9717 15.5974L12.0192 16.8662L9.52536 17.4738L9.20288 16.2749Z"
-            fill="#AA1B1B"
-          />
-          <path
-            d="M6.38021 14.7451L4.58984 13.8983L7.71622 10.0811L8.24581 11.3391L7.12746 12.5434L6.55774 13.0866L6.38021 14.7451Z"
-            fill="#CC3737"
-          />
-          <path
-            d="M7.71623 10.0811L5.48503 10.4251L4.91232 11.9815L4.58984 13.8983L7.71623 10.0811Z"
-            fill="#E65251"
-          />
-          <path
-            d="M6.55762 13.0866L8.54157 11.5112L9.2028 11.2639H9.82643L8.97689 12.1027L8.65441 14.3286L6.55762 13.0866Z"
-            fill="#EF848F"
-          />
-          <path
-            d="M6.55762 13.0866L8.54157 11.5111L9.2028 11.2639H9.82643L10.6652 10.4895L12.0191 9.54321H11.5576L10.0737 10.6723L8.24569 11.3391L6.55762 13.0866Z"
-            fill="#AA1B1B"
-          />
-          <path
-            d="M9.82632 11.2639L10.6651 10.4895L12.019 9.54321L11.7298 10.6187L10.9715 12.0811L8.6543 14.3285L8.97677 12.1026L9.82632 11.2639Z"
-            fill="#E04C4C"
-          />
-          <path
-            d="M10.9715 12.0811L11.8158 11.8123L10.9715 14.2155L8.6543 14.3285L10.9715 12.0811Z"
-            fill="#E76A72"
-          />
-          <path
-            d="M11.8159 11.8123L15.2031 9.59717L14.4288 12.2639L10.9717 14.2155L11.8159 11.8123Z"
-            fill="#E04C4C"
-          />
-          <path
-            d="M15.8461 12.4092L16.3402 12.7048L14.3172 15.1135L11.8643 14.6943L13.3858 13.3287L15.8461 12.4092Z"
-            fill="#B72C2C"
-          />
-          <path
-            d="M19.8484 14.178L19.6764 11.9065L16.9773 11.2317L14.6496 11.5037L14.4287 12.264L15.8461 12.4092L16.3402 12.7049L17.3753 13.1565L19.8484 14.178Z"
-            fill="#CC3737"
-          />
-          <path
-            d="M19.6765 11.9062L20.1281 12.4684L19.8485 14.1778L19.6765 11.9062Z"
-            fill="#AA1B1B"
-          />
-          <path
-            d="M20.128 12.4686L19.4936 9.17773L18.9128 9.29608L19.6764 11.9064L20.128 12.4686Z"
-            fill="#E65251"
-          />
-          <path
-            d="M18.9128 9.29614L16.9773 11.2317L19.6764 11.9065L18.9128 9.29614Z"
-            fill="#E76A72"
-          />
-          <path
-            d="M18.913 9.296L16.4453 6.86572L19.4937 9.17765L18.913 9.296Z"
-            fill="#EF848F"
-          />
-          <path
-            d="M16.4453 6.86572L17.0527 9.296H18.913L16.4453 6.86572Z"
-            fill="#E76A72"
-          />
-          <path
-            d="M17.0525 9.29614L16.9773 11.2317L18.9128 9.29614H17.0525Z"
-            fill="#EF848F"
-          />
-          <path
-            d="M17.0526 9.29614L15.2031 9.59729L14.6497 11.5037L16.9774 11.2317L17.0526 9.29614Z"
-            fill="#E65251"
-          />
-          <path
-            d="M4.58971 13.8983L3.99292 10.1992L5.20255 10.0811L5.48489 10.4251L4.91219 11.9815L4.58971 13.8983Z"
-            fill="#E76A72"
-          />
-          <path
-            d="M5.20255 10.081L6.84774 7.4248L3.99292 10.1991L5.20255 10.081Z"
-            fill="#EF848F"
-          />
-          <path
-            d="M5.20264 10.081L6.84782 7.4248L7.71617 7.8927L9.57375 8.08077L8.0414 8.45715L7.71617 10.081L5.48498 10.425L5.20264 10.081Z"
-            fill="#ED5A5A"
-          />
-          <path
-            d="M8.04129 8.45715L9.57364 8.08077L13.3858 6.9248L11.5576 9.54316L7.71606 10.081L8.04129 8.45715Z"
-            fill="#E76A72"
-          />
-          <path
-            d="M7.71606 10.0811L11.5576 9.54321L10.0736 10.6723L8.24565 11.3391L7.71606 10.0811Z"
-            fill="#E65251"
-          />
-          <path
-            d="M6.8479 7.42492L12.2945 5.89258L7.71625 7.89281L6.8479 7.42492Z"
-            fill="#EF8E9C"
-          />
-          <path
-            d="M12.2943 5.89258L13.3858 6.92492L9.57364 8.08088L7.71606 7.89281L12.2943 5.89258Z"
-            fill="#EF848F"
-          />
-          <path
-            d="M12.5447 6.12939C12.5701 6.15348 14.574 6.29591 14.574 6.29591L16.4454 6.86586L13.386 6.92504L12.5449 6.12962L12.5447 6.12939Z"
-            fill="#E76A72"
-          />
-          <path
-            d="M12.0191 9.54316L13.8319 9.17756L15.203 9.59706L13.3858 6.9248L11.5576 9.54316H12.0191Z"
-            fill="#CC3737"
-          />
-          <path
-            d="M16.4452 6.86572L17.0525 9.296L15.2029 9.59715L13.3857 6.9249L16.4452 6.86572Z"
-            fill="#D64949"
-          />
-          <path
-            d="M10.9717 12.0812L11.8159 11.8124L15.2031 9.59723L13.832 9.17773L11.7299 10.6188L10.9717 12.0812Z"
-            fill="#EF848F"
-          />
-          <path
-            d="M12.0192 9.54333L13.832 9.17773L11.73 10.6188L12.0192 9.54333Z"
-            fill="#ED5A5A"
-          />
-        </svg>
+        <Link href="/">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="12" cy="12" r="12" fill="#223144" />
+            <path
+              d="M13.074 17.2561H13.6304L15.2031 19.2401L14.7031 19.6664L13.074 17.2561Z"
+              fill="#B72C2C"
+            />
+            <path
+              d="M13.6304 17.2561L14.8967 17.3206L16.3402 19.5061L15.2031 19.2401L13.6304 17.2561Z"
+              fill="#AA1B1B"
+            />
+            <path
+              d="M14.7031 19.6664L15.8887 19.8609L16.3403 19.506L15.2031 19.24L14.7031 19.6664Z"
+              fill="#D84545"
+            />
+            <path
+              d="M12.2944 17.1996L13.074 17.256H13.6304L14.8967 17.3205L15.4988 17.3448L16.3403 16.2748L13.8644 15.85L13.3859 15.4629L12.2944 17.1996Z"
+              fill="#CC3737"
+            />
+            <path
+              d="M12.2944 17.1996L10.9717 15.5973L11.8643 14.6941L13.3859 15.4629L12.2944 17.1996Z"
+              fill="#E65251"
+            />
+            <path
+              d="M16.3402 16.2748L14.3172 15.1134L11.8643 14.6941L13.3858 15.4629L13.8643 15.8501L16.3402 16.2748Z"
+              fill="#D84545"
+            />
+            <path
+              d="M16.3403 16.275L17.2892 16.5007L17.3754 13.1564L16.3403 12.7048L14.3174 15.1136L16.3403 16.275Z"
+              fill="#E76A72"
+            />
+            <path
+              d="M17.2891 16.5005C17.2891 16.5005 19.0634 15.167 19.1817 15.0702C19.3001 14.9735 19.8485 14.1778 19.8485 14.1778L17.3753 13.1562L17.2893 16.5005H17.2891Z"
+              fill="#AA1B1B"
+            />
+            <path
+              d="M17.2891 16.5006L19.0313 15.6618L19.1817 15.0706L17.2891 16.5006Z"
+              fill="#D84545"
+            />
+            <path
+              d="M6.55762 13.0867L7.50922 15.0706L7.12207 15.7855L8.54157 16.4039L8.65441 14.3286L6.55762 13.0867Z"
+              fill="#E76A72"
+            />
+            <path
+              d="M7.1221 15.7855L6.55765 15.463L6.38013 14.7452L6.55765 13.0867L7.50926 15.0706L7.1221 15.7855Z"
+              fill="#E65251"
+            />
+            <path
+              d="M7.71606 16.0444L7.9929 16.9417C7.9929 16.9417 9.5413 17.5224 9.52524 17.474C9.50919 17.4256 9.20253 16.2749 9.20253 16.2749L8.5413 16.4041L7.71606 16.0447V16.0444Z"
+              fill="#CC3737"
+            />
+            <path
+              d="M8.5415 16.4039L9.20274 16.275L10.3803 15.947L10.9716 14.2156L8.65435 14.3286L8.5415 16.4039Z"
+              fill="#E65251"
+            />
+            <path
+              d="M10.3804 15.9469L10.9719 15.5974L11.8643 14.6942L13.3859 13.3286L15.8464 12.4091C15.8464 12.4091 14.4774 12.2639 14.429 12.2639C14.3806 12.2639 10.9719 14.2155 10.9719 14.2155L10.3804 15.9467V15.9469Z"
+              fill="#CC3737"
+            />
+            <path
+              d="M9.20288 16.2749L10.3804 15.947L10.9717 15.5974L12.0192 16.8662L9.52536 17.4738L9.20288 16.2749Z"
+              fill="#AA1B1B"
+            />
+            <path
+              d="M6.38021 14.7451L4.58984 13.8983L7.71622 10.0811L8.24581 11.3391L7.12746 12.5434L6.55774 13.0866L6.38021 14.7451Z"
+              fill="#CC3737"
+            />
+            <path
+              d="M7.71623 10.0811L5.48503 10.4251L4.91232 11.9815L4.58984 13.8983L7.71623 10.0811Z"
+              fill="#E65251"
+            />
+            <path
+              d="M6.55762 13.0866L8.54157 11.5112L9.2028 11.2639H9.82643L8.97689 12.1027L8.65441 14.3286L6.55762 13.0866Z"
+              fill="#EF848F"
+            />
+            <path
+              d="M6.55762 13.0866L8.54157 11.5111L9.2028 11.2639H9.82643L10.6652 10.4895L12.0191 9.54321H11.5576L10.0737 10.6723L8.24569 11.3391L6.55762 13.0866Z"
+              fill="#AA1B1B"
+            />
+            <path
+              d="M9.82632 11.2639L10.6651 10.4895L12.019 9.54321L11.7298 10.6187L10.9715 12.0811L8.6543 14.3285L8.97677 12.1026L9.82632 11.2639Z"
+              fill="#E04C4C"
+            />
+            <path
+              d="M10.9715 12.0811L11.8158 11.8123L10.9715 14.2155L8.6543 14.3285L10.9715 12.0811Z"
+              fill="#E76A72"
+            />
+            <path
+              d="M11.8159 11.8123L15.2031 9.59717L14.4288 12.2639L10.9717 14.2155L11.8159 11.8123Z"
+              fill="#E04C4C"
+            />
+            <path
+              d="M15.8461 12.4092L16.3402 12.7048L14.3172 15.1135L11.8643 14.6943L13.3858 13.3287L15.8461 12.4092Z"
+              fill="#B72C2C"
+            />
+            <path
+              d="M19.8484 14.178L19.6764 11.9065L16.9773 11.2317L14.6496 11.5037L14.4287 12.264L15.8461 12.4092L16.3402 12.7049L17.3753 13.1565L19.8484 14.178Z"
+              fill="#CC3737"
+            />
+            <path
+              d="M19.6765 11.9062L20.1281 12.4684L19.8485 14.1778L19.6765 11.9062Z"
+              fill="#AA1B1B"
+            />
+            <path
+              d="M20.128 12.4686L19.4936 9.17773L18.9128 9.29608L19.6764 11.9064L20.128 12.4686Z"
+              fill="#E65251"
+            />
+            <path
+              d="M18.9128 9.29614L16.9773 11.2317L19.6764 11.9065L18.9128 9.29614Z"
+              fill="#E76A72"
+            />
+            <path
+              d="M18.913 9.296L16.4453 6.86572L19.4937 9.17765L18.913 9.296Z"
+              fill="#EF848F"
+            />
+            <path
+              d="M16.4453 6.86572L17.0527 9.296H18.913L16.4453 6.86572Z"
+              fill="#E76A72"
+            />
+            <path
+              d="M17.0525 9.29614L16.9773 11.2317L18.9128 9.29614H17.0525Z"
+              fill="#EF848F"
+            />
+            <path
+              d="M17.0526 9.29614L15.2031 9.59729L14.6497 11.5037L16.9774 11.2317L17.0526 9.29614Z"
+              fill="#E65251"
+            />
+            <path
+              d="M4.58971 13.8983L3.99292 10.1992L5.20255 10.0811L5.48489 10.4251L4.91219 11.9815L4.58971 13.8983Z"
+              fill="#E76A72"
+            />
+            <path
+              d="M5.20255 10.081L6.84774 7.4248L3.99292 10.1991L5.20255 10.081Z"
+              fill="#EF848F"
+            />
+            <path
+              d="M5.20264 10.081L6.84782 7.4248L7.71617 7.8927L9.57375 8.08077L8.0414 8.45715L7.71617 10.081L5.48498 10.425L5.20264 10.081Z"
+              fill="#ED5A5A"
+            />
+            <path
+              d="M8.04129 8.45715L9.57364 8.08077L13.3858 6.9248L11.5576 9.54316L7.71606 10.081L8.04129 8.45715Z"
+              fill="#E76A72"
+            />
+            <path
+              d="M7.71606 10.0811L11.5576 9.54321L10.0736 10.6723L8.24565 11.3391L7.71606 10.0811Z"
+              fill="#E65251"
+            />
+            <path
+              d="M6.8479 7.42492L12.2945 5.89258L7.71625 7.89281L6.8479 7.42492Z"
+              fill="#EF8E9C"
+            />
+            <path
+              d="M12.2943 5.89258L13.3858 6.92492L9.57364 8.08088L7.71606 7.89281L12.2943 5.89258Z"
+              fill="#EF848F"
+            />
+            <path
+              d="M12.5447 6.12939C12.5701 6.15348 14.574 6.29591 14.574 6.29591L16.4454 6.86586L13.386 6.92504L12.5449 6.12962L12.5447 6.12939Z"
+              fill="#E76A72"
+            />
+            <path
+              d="M12.0191 9.54316L13.8319 9.17756L15.203 9.59706L13.3858 6.9248L11.5576 9.54316H12.0191Z"
+              fill="#CC3737"
+            />
+            <path
+              d="M16.4452 6.86572L17.0525 9.296L15.2029 9.59715L13.3857 6.9249L16.4452 6.86572Z"
+              fill="#D64949"
+            />
+            <path
+              d="M10.9717 12.0812L11.8159 11.8124L15.2031 9.59723L13.832 9.17773L11.7299 10.6188L10.9717 12.0812Z"
+              fill="#EF848F"
+            />
+            <path
+              d="M12.0192 9.54333L13.832 9.17773L11.73 10.6188L12.0192 9.54333Z"
+              fill="#ED5A5A"
+            />
+          </svg>
+        </Link>
         <div className="flex space-x-3">
           <IoTime size={24} className="fill-primary-dark" />
           <p className="font-medium">
@@ -1317,12 +1345,18 @@ export default function QuizPage() {
             <div className="flex h-[86vh] w-full flex-col items-center space-y-4 overflow-y-scroll bg-[#F4F4F4] px-5 py-6 lg:hidden">
               <h3 className="text-lg font-semibold">Nomor {index + 1}</h3>
               <div className="flex h-auto w-full flex-col items-center justify-start space-y-4 rounded-xl bg-white p-6 shadow-2xl">
-                <Image
-                  src="/homepage/background.png"
-                  alt="sample"
-                  height={400}
-                  width={300}
-                />
+                {questionQuery.data.image !== "" ||
+                questionQuery.data.image !== undefined ||
+                questionQuery.data.image !== null ? (
+                  <Image
+                    src={questionQuery.data.image ?? ""}
+                    alt="questionImage"
+                    height={400}
+                    width={300}
+                  />
+                ) : (
+                  <></>
+                )}
                 <p className="pt-1 text-start text-sm">
                   <Latex>{questionQuery.data.question}</Latex>
                 </p>
@@ -1387,12 +1421,18 @@ export default function QuizPage() {
               <div className="flex h-full w-full flex-col items-center space-y-8  py-8">
                 <h3 className="text-xl font-bold">Nomor {index + 1}</h3>
                 <div className="flex h-[65vh] w-[80%] flex-col items-start justify-start space-y-4 overflow-y-scroll rounded-xl bg-white p-6 shadow-2xl">
-                  <Image
-                    src="/homepage/background.png"
-                    alt="sample"
-                    height={400}
-                    width={300}
-                  />
+                  {questionQuery.data.image !== "" ||
+                  questionQuery.data.image !== undefined ||
+                  questionQuery.data.image !== null ? (
+                    <Image
+                      src={questionQuery.data.image ?? ""}
+                      alt="questionImage"
+                      height={400}
+                      width={300}
+                    />
+                  ) : (
+                    <></>
+                  )}
                   <p className="text-md leading-relaxed">
                     <Latex>{questionQuery.data.question}</Latex>
                   </p>

@@ -1,6 +1,12 @@
 import { Disclosure } from "@headlessui/react";
+import router from "next/router";
+import { useContext, useEffect } from "react";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
+
+import { api, setToken } from "~/utils/api";
 import PreExamNavbar from "~/components/preExam/preExamNavbar";
+import { TeamContext } from "~/utils/context/teamContext";
+import type { TeamContextType } from "~/utils/context/teamContext";
 
 const guides = [
   {
@@ -34,6 +40,30 @@ const guides = [
 ];
 
 export default function PenyisihanPage() {
+  const { setTeam } = useContext(TeamContext) as TeamContextType;
+
+  const refreshToken = api.user.refreshToken.useMutation({
+    onSuccess: (payload) => {
+      if (!payload) {
+        void router.push("/auth/login");
+      } else {
+        const { accessToken, username } = payload;
+
+        setTeam(username);
+        setToken(accessToken);
+      }
+    },
+    onError: () => {
+      void router.push("/auth/login");
+    }
+  });
+
+  //refresh token upon page load (only once)
+  useEffect(() => {
+    refreshToken.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="relative min-h-screen w-screen">
       <div className="z-20 flex h-full min-h-screen w-full flex-col items-center overflow-clip bg-[url('/preExam/bg_desktop_full.png')] bg-cover pb-12 lg:pb-24">
@@ -50,7 +80,7 @@ export default function PenyisihanPage() {
                     <>
                       <Disclosure.Button className="flex w-full items-center justify-between rounded-lg p-2 text-left font-medium">
                         <p className="text-lg font-semibold lg:text-xl">
-                          Mekanisme Penyisihan
+                          {guide.title}
                         </p>
                         {open ? (
                           <IoChevronUp size={20} />

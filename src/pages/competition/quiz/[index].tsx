@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   IoTime,
   IoChevronBack,
@@ -12,18 +12,43 @@ import Countdown from "react-countdown";
 import type { CountdownRendererFn } from "react-countdown";
 
 import { TeamContext } from "~/utils/context/teamContext";
+import type { TeamContextType } from "~/utils/context/teamContext";
 import useExam from "~/hooks/useExam";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { api, setToken } from "~/utils/api";
 
 export default function Quiz() {
   const [remainingTime, setRemainingTime] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { setTeam } = useContext(TeamContext) as TeamContextType;
 
   const router = useRouter();
   const index = parseInt(router.query.index as string);
 
   const { questionQuery, questionStatusQuery, answer, flag } = useExam(index);
+
+  const refreshToken = api.user.refreshToken.useMutation({
+    onSuccess: (payload) => {
+      if (!payload) {
+        void router.push("/auth/login");
+      } else {
+        const { accessToken, username } = payload;
+
+        setTeam(username);
+        setToken(accessToken);
+      }
+    },
+    onError: () => {
+      void router.push("/auth/login");
+    },
+  });
+
+  //refresh token upon page load (only once)
+  useEffect(() => {
+    refreshToken.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleOptionChange = (optionId: string | undefined) => {
     if (!questionQuery.data || !optionId) return;
@@ -60,7 +85,7 @@ export default function Quiz() {
     <div className="relative h-screen overflow-clip">
       {/* Nav Desktop */}
       <nav className="z-50 hidden h-[8vh] w-full items-center justify-between bg-[#E6EAED] px-14 shadow-md lg:flex">
-        <div className="flex items-center space-x-4">
+        <Link href="/" className="flex items-center space-x-4">
           <svg
             className="w-7"
             viewBox="0 0 24 24"
@@ -242,7 +267,7 @@ export default function Quiz() {
             />
           </svg>
           <b className="text-lg">Joints Logic Competition</b>
-        </div>
+        </Link>
         <div className="flex items-center space-x-4">
           <TeamContext.Consumer>
             {(value) => (

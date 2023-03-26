@@ -1,10 +1,39 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import router from "next/router";
+import { useContext, useEffect } from "react";
 import Hero from "~/components/homepage/Hero";
 import PreExamNavbar from "~/components/preExam/preExamNavbar";
+import { api, setToken } from "~/utils/api";
+import { TeamContext } from "~/utils/context/teamContext";
+import type { TeamContextType } from "~/utils/context/teamContext";
 
 const Home: NextPage = () => {
+  const { setTeam } = useContext(TeamContext) as TeamContextType;
+
+  const refreshToken = api.user.refreshToken.useMutation({
+    onSuccess: (payload) => {
+      if (!payload) {
+        void router.push("/auth/login");
+      } else {
+        const { accessToken, username } = payload;
+
+        setTeam(username);
+        setToken(accessToken);
+      }
+    },
+    onError: () => {
+      void router.push("/auth/login");
+    },
+  });
+
+  //refresh token upon page load (only once)
+  useEffect(() => {
+    refreshToken.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <Head>
