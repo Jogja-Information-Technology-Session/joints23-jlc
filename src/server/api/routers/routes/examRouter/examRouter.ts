@@ -1,4 +1,5 @@
 import { createTRPCRouter } from "~/server/api/trpc";
+import { getExamStatus } from "./queryExam";
 import { createExam, submitExam } from "./mutateExam";
 import {
   getWarmUpExamQuestions,
@@ -13,6 +14,7 @@ import {
 
 export const examRouter = createTRPCRouter({
   createExam,
+  getExamStatus,
   submitExam,
   getWarmUpExamQuestions,
   getExamQuestion,

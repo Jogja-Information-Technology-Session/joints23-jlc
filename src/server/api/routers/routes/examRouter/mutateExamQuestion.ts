@@ -36,7 +36,7 @@ export const setAnswer = privateProcedure
     const exam = await getExamByUserId(userId, input.examType, ctx.prisma);
 
     // check exam status
-    checkExamStatus(exam);
+    await checkExamStatus(exam);
 
     // get exam question
     const examQuestion = await getExamQuestionByIndex(
@@ -77,7 +77,7 @@ export const clearAnswer = privateProcedure
     const exam = await getExamByUserId(userId, input.examType, ctx.prisma);
 
     // check exam status
-    checkExamStatus(exam);
+    await checkExamStatus(exam);
 
     // get exam question
     const examQuestion = await getExamQuestionByIndex(
@@ -118,7 +118,7 @@ export const toggleFlagQuestion = privateProcedure
     const exam = await getExamByUserId(userId, input.examType, ctx.prisma);
 
     // check exam status
-    checkExamStatus(exam);
+    await checkExamStatus(exam);
 
     // get exam question
     const examQuestion = await getExamQuestionByIndex(
