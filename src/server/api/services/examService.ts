@@ -192,6 +192,11 @@ export function checkExamStatus(exam: Exam) {
       code: "BAD_REQUEST",
       message: "Exam has already ended!",
     });
+
+  // Change exam status
+  if (exam.status === ExamStatus.NOT_STARTED) {
+    exam.status = ExamStatus.STARTED;
+  }
 }
 
 export function getTimeRemaining(exam: Exam) {
