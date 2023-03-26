@@ -12,13 +12,16 @@ import Countdown from "react-countdown";
 import type { CountdownRendererFn } from "react-countdown";
 
 import { TeamContext } from "~/utils/context/teamContext";
-import { api } from "~/utils/api";
 import useExam from "~/hooks/useExam";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-export default function QuizPage() {
-  const [index, setIndex] = useState(0);
+export default function Quiz() {
   const [remainingTime, setRemainingTime] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const router = useRouter();
+  const index = parseInt(router.query.index as string);
 
   const { questionQuery, questionStatusQuery, answer, flag } = useExam(index);
 
@@ -1317,12 +1320,15 @@ export default function QuizPage() {
             <div className="flex h-[86vh] w-full flex-col items-center space-y-4 overflow-y-scroll bg-[#F4F4F4] px-5 py-6 lg:hidden">
               <h3 className="text-lg font-semibold">Nomor {index + 1}</h3>
               <div className="flex h-auto w-full flex-col items-center justify-start space-y-4 rounded-xl bg-white p-6 shadow-2xl">
-                <Image
-                  src="/homepage/background.png"
-                  alt="sample"
-                  height={400}
-                  width={300}
-                />
+                {questionQuery.data.image && (
+                  <Image
+                    src="/homepage/background.png"
+                    alt="sample"
+                    height={400}
+                    width={300}
+                  />
+                )}
+
                 <p className="pt-1 text-start text-sm">
                   <Latex>{questionQuery.data.question}</Latex>
                 </p>
@@ -1432,10 +1438,8 @@ export default function QuizPage() {
                   </div>
                 </div>
                 <div className="flex h-auto w-[80%] items-end justify-between">
-                  <button
-                    onClick={() => {
-                      if (index > 0) setIndex(index - 1);
-                    }}
+                  <Link
+                    href={`/competition/quiz/${index - 1}`}
                     className={`${
                       index <= 0 ? "invisible" : "visible"
                     } flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-3 shadow-md`}
@@ -1444,7 +1448,7 @@ export default function QuizPage() {
                     <p className="text-sm font-medium text-white">
                       Soal sebelumnya
                     </p>
-                  </button>
+                  </Link>
 
                   <button
                     onClick={() => handleFlagQuestion()}
@@ -1486,17 +1490,15 @@ export default function QuizPage() {
                   </button>
                   {index <
                     questionStatusQuery.data.examQuestionsStatus.length - 1 && (
-                    <button
-                      onClick={() => {
-                        setIndex(index + 1);
-                      }}
+                    <Link
+                      href={`/competition/quiz/${index + 1}`}
                       className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-3 shadow-md"
                     >
                       <p className="text-sm font-medium text-white">
                         Soal selanjutnya
                       </p>
                       <IoChevronForward size={20} className="text-white" />
-                    </button>
+                    </Link>
                   )}
                 </div>
               </div>
@@ -1504,17 +1506,12 @@ export default function QuizPage() {
 
             {/* Bottom Nav Mobile */}
             <nav className="absolute bottom-0 z-30 flex h-[7vh] w-full items-center justify-between bg-primary-dark px-5 lg:hidden">
-              <button
+              <Link
+                href={`/competition/quiz/${index - 1}`}
                 className={`${index <= 0 ? "invisible" : "visible"}`}
-                onClick={() => {
-                  console.log(index);
-                  if (index > 0) {
-                    setIndex(index - 1);
-                  }
-                }}
               >
                 <IoChevronBack size={24} className="text-white" />
-              </button>
+              </Link>
               <button
                 onClick={() => handleFlagQuestion()}
                 className={`${
@@ -1544,13 +1541,9 @@ export default function QuizPage() {
               </button>
               {index <
                 questionStatusQuery.data.examQuestionsStatus.length - 1 && (
-                <button
-                  onClick={() => {
-                    setIndex(index + 1);
-                  }}
-                >
+                <Link href={`/competition/quiz/${index + 1}`}>
                   <IoChevronForward size={24} className="text-white" />
-                </button>
+                </Link>
               )}
             </nav>
           </>
