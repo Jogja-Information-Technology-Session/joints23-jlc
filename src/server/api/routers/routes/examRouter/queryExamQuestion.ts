@@ -23,7 +23,7 @@ export const getExamQuestion = privateProcedure
     const exam = await getExamByUserId(userId, examType, ctx.prisma);
 
     // check exam status
-    checkExamStatus(exam);
+    await checkExamStatus(exam);
 
     // get exam question
     const examQuestion = await getExamQuestionByIndex(
@@ -62,7 +62,7 @@ export const getExamQuestionStatus = privateProcedure
     const exam = await getExamByUserId(userId, examType, ctx.prisma);
 
     // check exam status
-    checkExamStatus(exam);
+    await checkExamStatus(exam);
 
     // get all exam questions status
     const examQuestionsStatus = await getAllExamQuestionsStatus(

@@ -15,6 +15,26 @@ const addUser: NextPage = () => {
     console.log("refreshed");
   };
 
+  const getExamStatus = api.exam.getExamStatus.useQuery(
+    { examType: "PENYISIHAN" },
+    {
+      onError: (error) => {
+        if (error.message === "UNAUTHORIZED") {
+          refreshToken
+            .mutateAsync()
+            .then(() => {
+              void getExamStatus.refetch();
+            })
+            .catch(() => {
+              console.log("error");
+            });
+        }
+      },
+      retry: 0,
+      enabled: false,
+    }
+  );
+
   // const addQuestion = api.question.inputQuestion.useMutation({
   //   onSuccess: () => {
   //     console.log("success");
@@ -83,6 +103,23 @@ const addUser: NextPage = () => {
       >
         ⊕
       </button>
+      <br />
+      <button
+        onClick={() => {
+          getExamStatus
+
+            .refetch()
+            .then((res) => {
+              console.log(res.data);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }}
+      >
+        get exam status
+      </button>
+
       <br />
       <button onClick={handleGet}>get questions</button>
       <br />

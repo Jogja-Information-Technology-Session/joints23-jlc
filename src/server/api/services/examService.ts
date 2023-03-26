@@ -1,11 +1,13 @@
 import {
   type ExamType,
-  type PrismaClient,
+  PrismaClient,
   type Option,
   ExamStatus,
   type Exam,
 } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+
+const prisma = new PrismaClient();
 
 export async function gradeExam(exam: Exam, prisma: PrismaClient) {
   // get exam questions
@@ -170,7 +172,7 @@ export async function getShuffledOptions(
   return shuffledOptions;
 }
 
-export function checkExamStatus(exam: Exam) {
+export async function checkExamStatus(exam: Exam) {
   if (exam.status === ExamStatus.SUBMITTED)
     throw new TRPCError({
       code: "BAD_REQUEST",
@@ -195,7 +197,14 @@ export function checkExamStatus(exam: Exam) {
 
   // Change exam status
   if (exam.status === ExamStatus.NOT_STARTED) {
-    exam.status = ExamStatus.STARTED;
+    await prisma.exam.update({
+      where: {
+        id: exam.id,
+      },
+      data: {
+        status: ExamStatus.STARTED,
+      },
+    });
   }
 }
 
