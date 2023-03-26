@@ -1,15 +1,25 @@
 import { api } from "~/utils/api";
 
-export default function useExam(index: number) {
+export default function useExam(index: number, team: string) {
   const utils = api.useContext();
 
-  const questionQuery = api.exam.getExamQuestion.useQuery({
-    index: index,
-    examType: "WARM_UP",
-  });
-  const questionStatusQuery = api.exam.getExamQuestionStatus.useQuery({
-    examType: "WARM_UP",
-  });
+  const questionQuery = api.exam.getExamQuestion.useQuery(
+    {
+      index: index,
+      examType: "WARM_UP",
+    },
+    {
+      enabled: !!team,
+    }
+  );
+  const questionStatusQuery = api.exam.getExamQuestionStatus.useQuery(
+    {
+      examType: "WARM_UP",
+    },
+    {
+      enabled: !!team,
+    }
+  );
 
   const answer = api.exam.setAnswer.useMutation({
     onSettled: async () => {
@@ -23,12 +33,10 @@ export default function useExam(index: number) {
     },
   });
 
-  
-
   return {
     questionQuery,
     questionStatusQuery,
     answer,
     flag,
-  }
+  };
 }

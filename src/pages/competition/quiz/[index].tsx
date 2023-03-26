@@ -21,12 +21,15 @@ import { api, setToken } from "~/utils/api";
 export default function Quiz() {
   const [remainingTime, setRemainingTime] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { setTeam } = useContext(TeamContext) as TeamContextType;
+  const { setTeam, team } = useContext(TeamContext) as TeamContextType;
 
   const router = useRouter();
   const index = parseInt(router.query.index as string);
 
-  const { questionQuery, questionStatusQuery, answer, flag } = useExam(index);
+  const { questionQuery, questionStatusQuery, answer, flag } = useExam(
+    index,
+    team
+  );
 
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (payload) => {
@@ -80,6 +83,17 @@ export default function Quiz() {
       {seconds.toString().padStart(2, "0")}
     </span>
   );
+
+  if (questionQuery.error || questionStatusQuery.error) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <h1 className="text-2xl font-bold">Something went wrong</h1>
+        <h2>
+          {questionQuery.error?.message || questionStatusQuery.error?.message}
+        </h2>
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-screen overflow-clip">
@@ -1334,97 +1348,34 @@ export default function Quiz() {
         </svg>
       </nav>
 
-      {questionQuery.isLoading || questionStatusQuery.isLoading ? (
-        <div></div>
-      ) : (
-        questionQuery.data &&
-        questionStatusQuery.data && (
-          <>
-            {/* Content Mobile */}
+      <>
+        {/* Content Mobile */}
 
-            <div className="flex h-[86vh] w-full flex-col items-center space-y-4 overflow-y-scroll bg-[#F4F4F4] px-5 py-6 lg:hidden">
-              <h3 className="text-lg font-semibold">Nomor {index + 1}</h3>
-              <div className="flex h-auto w-full flex-col items-center justify-start space-y-4 rounded-xl bg-white p-6 shadow-2xl">
-                {questionQuery.data.image && (
-                  <Image
-                    src="/homepage/background.png"
-                    alt="sample"
-                    height={400}
-                    width={300}
-                  />
-                )}
-
-                <p className="pt-1 text-start text-sm">
-                  <Latex>{questionQuery.data.question}</Latex>
-                </p>
-                <div className="flex w-full flex-col space-y-4">
-                  {questionQuery.data.options.map((option, index) => (
-                    <button
-                      key={index}
-                      className="flex items-start space-x-4"
-                      onClick={() => {
-                        handleOptionChange(option?.id);
-                      }}
-                    >
-                      <div className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
-                        <div
-                          className={
-                            option?.id == questionQuery.data.answer
-                              ? "flex h-6 w-6 items-center justify-center rounded-full bg-primary-dark text-white"
-                              : ""
-                          }
-                        >
-                          {index == 0
-                            ? "A"
-                            : index == 1
-                            ? "B"
-                            : index == 2
-                            ? "C"
-                            : index == 3
-                            ? "D"
-                            : "E"}
-                        </div>
-                      </div>
-                      <p className="pt-1 text-start text-sm">
-                        <Latex>{option?.prompt}</Latex>
-                      </p>
-                    </button>
-                  ))}
-                </div>
+        <div className="flex h-[86vh] w-full flex-col items-center space-y-4 overflow-y-scroll bg-[#F4F4F4] px-5 py-6 lg:hidden">
+          <h3 className="text-lg font-semibold">Nomor {index + 1}</h3>
+          <div className="flex h-auto w-full flex-col items-center justify-start space-y-4 rounded-xl bg-white p-6 shadow-2xl">
+            {questionQuery.isLoading ? (
+              <div role="status" className="max-w-sm animate-pulse">
+                <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 " />
+                <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200 " />
+                <div className="mb-2.5 h-2 rounded-full bg-gray-200 " />
+                <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200 " />
+                <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-200 " />
+                <div className="h-2 max-w-[360px] rounded-full bg-gray-200 " />
+                <span className="sr-only">Loading...</span>
               </div>
-            </div>
-
-            {/* Content Desktop */}
-            <div className="flex w-full overflow-y-scroll">
-              <div className="flex h-screen w-[4vw] shrink-0 items-start justify-center bg-primary-dark py-4">
-                <button
-                  onClick={() => {
-                    setIsSidebarOpen(!isSidebarOpen);
-                  }}
-                >
-                  <svg
-                    viewBox="0 0 40 40"
-                    className="mr-1 h-8 w-8"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M5 6.66667C5 6.22464 5.17559 5.80072 5.48816 5.48816C5.80072 5.17559 6.22464 5 6.66667 5H11.6667C12.1087 5 12.5326 5.17559 12.8452 5.48816C13.1577 5.80072 13.3333 6.22464 13.3333 6.66667V11.6667C13.3333 12.1087 13.1577 12.5326 12.8452 12.8452C12.5326 13.1577 12.1087 13.3333 11.6667 13.3333H6.66667C6.22464 13.3333 5.80072 13.1577 5.48816 12.8452C5.17559 12.5326 5 12.1087 5 11.6667V6.66667ZM5 17.5C5 17.058 5.17559 16.634 5.48816 16.3215C5.80072 16.0089 6.22464 15.8333 6.66667 15.8333H11.6667C12.1087 15.8333 12.5326 16.0089 12.8452 16.3215C13.1577 16.634 13.3333 17.058 13.3333 17.5V22.5C13.3333 22.942 13.1577 23.3659 12.8452 23.6785C12.5326 23.9911 12.1087 24.1667 11.6667 24.1667H6.66667C6.22464 24.1667 5.80072 23.9911 5.48816 23.6785C5.17559 23.3659 5 22.942 5 22.5V17.5ZM5 28.3333C5 27.8913 5.17559 27.4674 5.48816 27.1548C5.80072 26.8423 6.22464 26.6667 6.66667 26.6667H11.6667C12.1087 26.6667 12.5326 26.8423 12.8452 27.1548C13.1577 27.4674 13.3333 27.8913 13.3333 28.3333V33.3333C13.3333 33.7754 13.1577 34.1993 12.8452 34.5118C12.5326 34.8244 12.1087 35 11.6667 35H6.66667C6.22464 35 5.80072 34.8244 5.48816 34.5118C5.17559 34.1993 5 33.7754 5 33.3333V28.3333ZM15.8333 6.66667C15.8333 6.22464 16.0089 5.80072 16.3215 5.48816C16.634 5.17559 17.058 5 17.5 5H22.5C22.942 5 23.3659 5.17559 23.6785 5.48816C23.9911 5.80072 24.1667 6.22464 24.1667 6.66667V11.6667C24.1667 12.1087 23.9911 12.5326 23.6785 12.8452C23.3659 13.1577 22.942 13.3333 22.5 13.3333H17.5C17.058 13.3333 16.634 13.1577 16.3215 12.8452C16.0089 12.5326 15.8333 12.1087 15.8333 11.6667V6.66667ZM15.8333 17.5C15.8333 17.058 16.0089 16.634 16.3215 16.3215C16.634 16.0089 17.058 15.8333 17.5 15.8333H22.5C22.942 15.8333 23.3659 16.0089 23.6785 16.3215C23.9911 16.634 24.1667 17.058 24.1667 17.5V22.5C24.1667 22.942 23.9911 23.3659 23.6785 23.6785C23.3659 23.9911 22.942 24.1667 22.5 24.1667H17.5C17.058 24.1667 16.634 23.9911 16.3215 23.6785C16.0089 23.3659 15.8333 22.942 15.8333 22.5V17.5ZM15.8333 28.3333C15.8333 27.8913 16.0089 27.4674 16.3215 27.1548C16.634 26.8423 17.058 26.6667 17.5 26.6667H22.5C22.942 26.6667 23.3659 26.8423 23.6785 27.1548C23.9911 27.4674 24.1667 27.8913 24.1667 28.3333V33.3333C24.1667 33.7754 23.9911 34.1993 23.6785 34.5118C23.3659 34.8244 22.942 35 22.5 35H17.5C17.058 35 16.634 34.8244 16.3215 34.5118C16.0089 34.1993 15.8333 33.7754 15.8333 33.3333V28.3333ZM26.6667 6.66667C26.6667 6.22464 26.8423 5.80072 27.1548 5.48816C27.4674 5.17559 27.8913 5 28.3333 5H33.3333C33.7754 5 34.1993 5.17559 34.5118 5.48816C34.8244 5.80072 35 6.22464 35 6.66667V11.6667C35 12.1087 34.8244 12.5326 34.5118 12.8452C34.1993 13.1577 33.7754 13.3333 33.3333 13.3333H28.3333C27.8913 13.3333 27.4674 13.1577 27.1548 12.8452C26.8423 12.5326 26.6667 12.1087 26.6667 11.6667V6.66667ZM26.6667 17.5C26.6667 17.058 26.8423 16.634 27.1548 16.3215C27.4674 16.0089 27.8913 15.8333 28.3333 15.8333H33.3333C33.7754 15.8333 34.1993 16.0089 34.5118 16.3215C34.8244 16.634 35 17.058 35 17.5V22.5C35 22.942 34.8244 23.3659 34.5118 23.6785C34.1993 23.9911 33.7754 24.1667 33.3333 24.1667H28.3333C27.8913 24.1667 27.4674 23.9911 27.1548 23.6785C26.8423 23.3659 26.6667 22.942 26.6667 22.5V17.5ZM26.6667 28.3333C26.6667 27.8913 26.8423 27.4674 27.1548 27.1548C27.4674 26.8423 27.8913 26.6667 28.3333 26.6667H33.3333C33.7754 26.6667 34.1993 26.8423 34.5118 27.1548C34.8244 27.4674 35 27.8913 35 28.3333V33.3333C35 33.7754 34.8244 34.1993 34.5118 34.5118C34.1993 34.8244 33.7754 35 33.3333 35H28.3333C27.8913 35 27.4674 34.8244 27.1548 34.5118C26.8423 34.1993 26.6667 33.7754 26.6667 33.3333V28.3333Z"
-                      fill="#E6EAED"
+            ) : (
+              questionQuery.data && (
+                <>
+                  {questionQuery.data.image && (
+                    <Image
+                      src={questionQuery.data.image}
+                      alt="sample"
+                      height={400}
+                      width={300}
                     />
-                  </svg>
-                </button>
-              </div>
-              <div className="flex h-full w-full flex-col items-center space-y-8  py-8">
-                <h3 className="text-xl font-bold">Nomor {index + 1}</h3>
-                <div className="flex h-[65vh] w-[80%] flex-col items-start justify-start space-y-4 overflow-y-scroll rounded-xl bg-white p-6 shadow-2xl">
-                  <Image
-                    src="/homepage/background.png"
-                    alt="sample"
-                    height={400}
-                    width={300}
-                  />
-                  <p className="text-md leading-relaxed">
+                  )}
+                  <p className="pt-1 text-start text-sm">
                     <Latex>{questionQuery.data.question}</Latex>
                   </p>
                   <div className="flex w-full flex-col space-y-4">
@@ -1455,125 +1406,214 @@ export default function Quiz() {
                               : "E"}
                           </div>
                         </div>
-                        <p className="text-md pt-0.5 text-start">
+                        <p className="pt-1 text-start text-sm">
                           <Latex>{option?.prompt}</Latex>
                         </p>
                       </button>
                     ))}
                   </div>
-                </div>
-                <div className="flex h-auto w-[80%] items-end justify-between">
-                  <Link
-                    href={`/competition/quiz/${index - 1}`}
-                    className={`${
-                      index <= 0 ? "invisible" : "visible"
-                    } flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-3 shadow-md`}
-                  >
-                    <IoChevronBack size={20} className="text-white" />
-                    <p className="text-sm font-medium text-white">
-                      Soal sebelumnya
-                    </p>
-                  </Link>
+                </>
+              )
+            )}
+          </div>
+        </div>
 
-                  <button
-                    onClick={() => handleFlagQuestion()}
-                    className={`${
-                      questionQuery.data.isFlagged
-                        ? "border-white bg-red-400"
-                        : "border-primary-dark bg-white"
-                    } flex items-center space-x-3 rounded-md border-[0.75px] py-2 px-3 text-primary-dark shadow-md`}
-                  >
-                    <svg
-                      className="h-4 w-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clip-path="url(#clip0_440_819)">
-                        <path
-                          d="M6.096 2.38499C5.86774 2.28616 5.61849 2.24565 5.37068 2.26709C5.12286 2.28854 4.88428 2.37127 4.67639 2.50785C4.4685 2.64442 4.29784 2.83055 4.17977 3.04948C4.0617 3.2684 3.99992 3.51326 4 3.76199V21C4 21.2652 4.10536 21.5196 4.29289 21.7071C4.48043 21.8946 4.73478 22 5 22C5.26522 22 5.51957 21.8946 5.70711 21.7071C5.89464 21.5196 6 21.2652 6 21V16.657L19.339 10.877C20.544 10.354 20.544 8.64599 19.339 8.12399L6.096 2.38499Z"
-                          fill={`${
-                            questionQuery.data.isFlagged ? "#FFFFFF" : "#223144"
-                          }`}
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_440_819">
-                          <rect width="24" height="24" fill="white" />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                    <p
-                      className={`${
-                        questionQuery.data.isFlagged
-                          ? "text-white"
-                          : " text-primary-dark"
-                      } text-sm`}
-                    >
-                      Tandai soal
-                    </p>
-                  </button>
-                  {index <
-                    questionStatusQuery.data.examQuestionsStatus.length - 1 && (
-                    <Link
-                      href={`/competition/quiz/${index + 1}`}
-                      className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-3 shadow-md"
-                    >
-                      <p className="text-sm font-medium text-white">
-                        Soal selanjutnya
-                      </p>
-                      <IoChevronForward size={20} className="text-white" />
-                    </Link>
-                  )}
+        {/* Content Desktop */}
+        <div className="flex w-full overflow-y-scroll">
+          <div className="flex h-screen w-[4vw] shrink-0 items-start justify-center bg-primary-dark py-4">
+            <button
+              onClick={() => {
+                setIsSidebarOpen(!isSidebarOpen);
+              }}
+            >
+              <svg
+                viewBox="0 0 40 40"
+                className="mr-1 h-8 w-8"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 6.66667C5 6.22464 5.17559 5.80072 5.48816 5.48816C5.80072 5.17559 6.22464 5 6.66667 5H11.6667C12.1087 5 12.5326 5.17559 12.8452 5.48816C13.1577 5.80072 13.3333 6.22464 13.3333 6.66667V11.6667C13.3333 12.1087 13.1577 12.5326 12.8452 12.8452C12.5326 13.1577 12.1087 13.3333 11.6667 13.3333H6.66667C6.22464 13.3333 5.80072 13.1577 5.48816 12.8452C5.17559 12.5326 5 12.1087 5 11.6667V6.66667ZM5 17.5C5 17.058 5.17559 16.634 5.48816 16.3215C5.80072 16.0089 6.22464 15.8333 6.66667 15.8333H11.6667C12.1087 15.8333 12.5326 16.0089 12.8452 16.3215C13.1577 16.634 13.3333 17.058 13.3333 17.5V22.5C13.3333 22.942 13.1577 23.3659 12.8452 23.6785C12.5326 23.9911 12.1087 24.1667 11.6667 24.1667H6.66667C6.22464 24.1667 5.80072 23.9911 5.48816 23.6785C5.17559 23.3659 5 22.942 5 22.5V17.5ZM5 28.3333C5 27.8913 5.17559 27.4674 5.48816 27.1548C5.80072 26.8423 6.22464 26.6667 6.66667 26.6667H11.6667C12.1087 26.6667 12.5326 26.8423 12.8452 27.1548C13.1577 27.4674 13.3333 27.8913 13.3333 28.3333V33.3333C13.3333 33.7754 13.1577 34.1993 12.8452 34.5118C12.5326 34.8244 12.1087 35 11.6667 35H6.66667C6.22464 35 5.80072 34.8244 5.48816 34.5118C5.17559 34.1993 5 33.7754 5 33.3333V28.3333ZM15.8333 6.66667C15.8333 6.22464 16.0089 5.80072 16.3215 5.48816C16.634 5.17559 17.058 5 17.5 5H22.5C22.942 5 23.3659 5.17559 23.6785 5.48816C23.9911 5.80072 24.1667 6.22464 24.1667 6.66667V11.6667C24.1667 12.1087 23.9911 12.5326 23.6785 12.8452C23.3659 13.1577 22.942 13.3333 22.5 13.3333H17.5C17.058 13.3333 16.634 13.1577 16.3215 12.8452C16.0089 12.5326 15.8333 12.1087 15.8333 11.6667V6.66667ZM15.8333 17.5C15.8333 17.058 16.0089 16.634 16.3215 16.3215C16.634 16.0089 17.058 15.8333 17.5 15.8333H22.5C22.942 15.8333 23.3659 16.0089 23.6785 16.3215C23.9911 16.634 24.1667 17.058 24.1667 17.5V22.5C24.1667 22.942 23.9911 23.3659 23.6785 23.6785C23.3659 23.9911 22.942 24.1667 22.5 24.1667H17.5C17.058 24.1667 16.634 23.9911 16.3215 23.6785C16.0089 23.3659 15.8333 22.942 15.8333 22.5V17.5ZM15.8333 28.3333C15.8333 27.8913 16.0089 27.4674 16.3215 27.1548C16.634 26.8423 17.058 26.6667 17.5 26.6667H22.5C22.942 26.6667 23.3659 26.8423 23.6785 27.1548C23.9911 27.4674 24.1667 27.8913 24.1667 28.3333V33.3333C24.1667 33.7754 23.9911 34.1993 23.6785 34.5118C23.3659 34.8244 22.942 35 22.5 35H17.5C17.058 35 16.634 34.8244 16.3215 34.5118C16.0089 34.1993 15.8333 33.7754 15.8333 33.3333V28.3333ZM26.6667 6.66667C26.6667 6.22464 26.8423 5.80072 27.1548 5.48816C27.4674 5.17559 27.8913 5 28.3333 5H33.3333C33.7754 5 34.1993 5.17559 34.5118 5.48816C34.8244 5.80072 35 6.22464 35 6.66667V11.6667C35 12.1087 34.8244 12.5326 34.5118 12.8452C34.1993 13.1577 33.7754 13.3333 33.3333 13.3333H28.3333C27.8913 13.3333 27.4674 13.1577 27.1548 12.8452C26.8423 12.5326 26.6667 12.1087 26.6667 11.6667V6.66667ZM26.6667 17.5C26.6667 17.058 26.8423 16.634 27.1548 16.3215C27.4674 16.0089 27.8913 15.8333 28.3333 15.8333H33.3333C33.7754 15.8333 34.1993 16.0089 34.5118 16.3215C34.8244 16.634 35 17.058 35 17.5V22.5C35 22.942 34.8244 23.3659 34.5118 23.6785C34.1993 23.9911 33.7754 24.1667 33.3333 24.1667H28.3333C27.8913 24.1667 27.4674 23.9911 27.1548 23.6785C26.8423 23.3659 26.6667 22.942 26.6667 22.5V17.5ZM26.6667 28.3333C26.6667 27.8913 26.8423 27.4674 27.1548 27.1548C27.4674 26.8423 27.8913 26.6667 28.3333 26.6667H33.3333C33.7754 26.6667 34.1993 26.8423 34.5118 27.1548C34.8244 27.4674 35 27.8913 35 28.3333V33.3333C35 33.7754 34.8244 34.1993 34.5118 34.5118C34.1993 34.8244 33.7754 35 33.3333 35H28.3333C27.8913 35 27.4674 34.8244 27.1548 34.5118C26.8423 34.1993 26.6667 33.7754 26.6667 33.3333V28.3333Z"
+                  fill="#E6EAED"
+                />
+              </svg>
+            </button>
+          </div>
+          <div className="flex h-full w-full flex-col items-center space-y-8  py-8">
+            <h3 className="text-xl font-bold">Nomor {index + 1}</h3>
+            <div className="flex h-[65vh] w-[80%] flex-col items-start justify-start space-y-4 overflow-y-scroll rounded-xl bg-white p-6 shadow-2xl">
+              {questionQuery.isLoading ? (
+                <div role="status" className="max-w-sm animate-pulse">
+                  <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 " />
+                  <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200 " />
+                  <div className="mb-2.5 h-2 rounded-full bg-gray-200 " />
+                  <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200 " />
+                  <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-200 " />
+                  <div className="h-2 max-w-[360px] rounded-full bg-gray-200 " />
+                  <span className="sr-only">Loading...</span>
                 </div>
-              </div>
+              ) : (
+                questionQuery.data && (
+                  <>
+                    {questionQuery.data.image && (
+                      <Image
+                        src="/homepage/background.png"
+                        alt="sample"
+                        height={400}
+                        width={300}
+                      />
+                    )}
+                    <p className="text-md leading-relaxed">
+                      <Latex>{questionQuery.data.question}</Latex>
+                    </p>
+                    <div className="flex w-full flex-col space-y-4">
+                      {questionQuery.data.options.map((option, index) => (
+                        <button
+                          key={index}
+                          className="flex items-start space-x-4"
+                          onClick={() => {
+                            handleOptionChange(option?.id);
+                          }}
+                        >
+                          <div className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
+                            <div
+                              className={
+                                option?.id == questionQuery.data.answer
+                                  ? "flex h-6 w-6 items-center justify-center rounded-full bg-primary-dark text-white"
+                                  : ""
+                              }
+                            >
+                              {index == 0
+                                ? "A"
+                                : index == 1
+                                ? "B"
+                                : index == 2
+                                ? "C"
+                                : index == 3
+                                ? "D"
+                                : "E"}
+                            </div>
+                          </div>
+                          <p className="text-md pt-0.5 text-start">
+                            <Latex>{option?.prompt}</Latex>
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )
+              )}
             </div>
-
-            {/* Bottom Nav Mobile */}
-            <nav className="absolute bottom-0 z-30 flex h-[7vh] w-full items-center justify-between bg-primary-dark px-5 lg:hidden">
+            <div className="flex h-auto w-[80%] items-end justify-between">
               <Link
                 href={`/competition/quiz/${index - 1}`}
-                className={`${index <= 0 ? "invisible" : "visible"}`}
-              >
-                <IoChevronBack size={24} className="text-white" />
-              </Link>
-              <button
-                onClick={() => handleFlagQuestion()}
                 className={`${
-                  questionQuery.data.isFlagged ? "bg-red-400" : ""
-                } flex items-center space-x-3 rounded-md border-[0.75px] border-white py-1 px-4 text-white`}
+                  index <= 0 ? "invisible" : "visible"
+                } flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-3 shadow-md`}
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+                <IoChevronBack size={20} className="text-white" />
+                <p className="text-sm font-medium text-white">
+                  Soal sebelumnya
+                </p>
+              </Link>
+
+              {questionQuery.data && (
+                <button
+                  onClick={() => handleFlagQuestion()}
+                  className={`${
+                    questionQuery.data.isFlagged
+                      ? "border-white bg-red-400"
+                      : "border-primary-dark bg-white"
+                  } flex items-center space-x-3 rounded-md border-[0.75px] py-2 px-3 text-primary-dark shadow-md`}
                 >
-                  <g clip-path="url(#clip0_431_676)">
-                    <path
-                      d="M5.07967 1.98743C4.88946 1.90507 4.68175 1.87131 4.47524 1.88918C4.26873 1.90705 4.0699 1.97599 3.89666 2.08981C3.72342 2.20362 3.58121 2.35873 3.48281 2.54116C3.38442 2.7236 3.33294 2.92765 3.33301 3.13493V17.4999C3.33301 17.7209 3.42081 17.9329 3.57709 18.0892C3.73337 18.2455 3.94533 18.3333 4.16634 18.3333C4.38736 18.3333 4.59932 18.2455 4.7556 18.0892C4.91188 17.9329 4.99967 17.7209 4.99967 17.4999V13.8808L16.1155 9.0641C17.1197 8.62826 17.1197 7.20493 16.1155 6.76993L5.07967 1.98743Z"
-                      fill="#F4F4F4"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_431_676">
-                      <rect width="20" height="20" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                <p className="text-sm">Tandai soal</p>
-              </button>
-              {index <
-                questionStatusQuery.data.examQuestionsStatus.length - 1 && (
-                <Link href={`/competition/quiz/${index + 1}`}>
-                  <IoChevronForward size={24} className="text-white" />
-                </Link>
+                  <svg
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g clip-path="url(#clip0_440_819)">
+                      <path
+                        d="M6.096 2.38499C5.86774 2.28616 5.61849 2.24565 5.37068 2.26709C5.12286 2.28854 4.88428 2.37127 4.67639 2.50785C4.4685 2.64442 4.29784 2.83055 4.17977 3.04948C4.0617 3.2684 3.99992 3.51326 4 3.76199V21C4 21.2652 4.10536 21.5196 4.29289 21.7071C4.48043 21.8946 4.73478 22 5 22C5.26522 22 5.51957 21.8946 5.70711 21.7071C5.89464 21.5196 6 21.2652 6 21V16.657L19.339 10.877C20.544 10.354 20.544 8.64599 19.339 8.12399L6.096 2.38499Z"
+                        fill={`${
+                          questionQuery.data.isFlagged ? "#FFFFFF" : "#223144"
+                        }`}
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_440_819">
+                        <rect width="24" height="24" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  <p
+                    className={`${
+                      questionQuery.data.isFlagged
+                        ? "text-white"
+                        : " text-primary-dark"
+                    } text-sm`}
+                  >
+                    Tandai soal
+                  </p>
+                </button>
               )}
-            </nav>
-          </>
-        )
-      )}
+              {questionStatusQuery?.data &&
+                index <
+                  questionStatusQuery.data.examQuestionsStatus.length - 1 && (
+                  <Link href={`/competition/quiz/${index + 1}`}>
+                    <IoChevronForward size={24} className="text-white" />
+                  </Link>
+                )}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Nav Mobile */}
+        <nav className="absolute bottom-0 z-30 flex h-[7vh] w-full items-center justify-between bg-primary-dark px-5 lg:hidden">
+          <Link
+            href={`/competition/quiz/${index - 1}`}
+            className={`${index <= 0 ? "invisible" : "visible"}`}
+          >
+            <IoChevronBack size={24} className="text-white" />
+          </Link>
+          {questionQuery.data && (
+            <button
+              onClick={() => handleFlagQuestion()}
+              className={`${
+                questionQuery.data.isFlagged ? "bg-red-400" : ""
+              } flex items-center space-x-3 rounded-md border-[0.75px] border-white py-1 px-4 text-white`}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clip-path="url(#clip0_431_676)">
+                  <path
+                    d="M5.07967 1.98743C4.88946 1.90507 4.68175 1.87131 4.47524 1.88918C4.26873 1.90705 4.0699 1.97599 3.89666 2.08981C3.72342 2.20362 3.58121 2.35873 3.48281 2.54116C3.38442 2.7236 3.33294 2.92765 3.33301 3.13493V17.4999C3.33301 17.7209 3.42081 17.9329 3.57709 18.0892C3.73337 18.2455 3.94533 18.3333 4.16634 18.3333C4.38736 18.3333 4.59932 18.2455 4.7556 18.0892C4.91188 17.9329 4.99967 17.7209 4.99967 17.4999V13.8808L16.1155 9.0641C17.1197 8.62826 17.1197 7.20493 16.1155 6.76993L5.07967 1.98743Z"
+                    fill="#F4F4F4"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_431_676">
+                    <rect width="20" height="20" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+              <p className="text-sm">Tandai soal</p>
+            </button>
+          )}
+
+          {questionStatusQuery?.data &&
+            index < questionStatusQuery.data.examQuestionsStatus.length - 1 && (
+              <Link href={`/competition/quiz/${index + 1}`}>
+                <IoChevronForward size={24} className="text-white" />
+              </Link>
+            )}
+        </nav>
+      </>
     </div>
   );
 }
