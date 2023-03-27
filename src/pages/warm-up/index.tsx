@@ -1,7 +1,8 @@
-import { Disclosure } from "@headlessui/react";
+import { Dialog, Disclosure, Transition } from "@headlessui/react";
+import { ExamStatus } from "@prisma/client";
 import Image from "next/image";
 import router from "next/router";
-import { useContext, useEffect } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 
 import PreExamNavbar from "~/components/preExam/preExamNavbar";
@@ -22,6 +23,16 @@ const guides = [
 
 export default function WarmUpPage() {
   const { setTeam } = useContext(TeamContext) as TeamContextType;
+  const [error, setError] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
 
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (payload) => {
@@ -39,6 +50,26 @@ export default function WarmUpPage() {
     },
   });
 
+  const getExamStatus = api.exam.getExamStatus.useQuery(
+    { examType: "WARM_UP" },
+    {
+      onError: (error) => {
+        if (error.message === "UNAUTHORIZED") {
+          refreshToken
+            .mutateAsync()
+            .then(() => {
+              void getExamStatus.refetch();
+            })
+            .catch(() => {
+              console.log("error");
+            });
+        }
+      },
+      retry: 0,
+      enabled: false,
+    }
+  );
+
   //refresh token upon page load (only once)
   useEffect(() => {
     refreshToken.mutate();
@@ -47,6 +78,63 @@ export default function WarmUpPage() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden">
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    Mulai sesi Warm-Up?
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">
+                      Jika Anda memulai sesi Warm-Up, sesi akan dimulai dan
+                      tidak dapat dibatalkan
+                    </p>
+                  </div>
+
+                  <div className="mt-8">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-primary-dark px-4 py-2 text-sm font-medium text-white"
+                      onClick={() => {
+                        void router.push("competition/quiz/warm-up");
+                        closeModal();
+                      }}
+                    >
+                      Mulai sesi
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
       <div className="flex h-full w-full flex-col items-center">
         <PreExamNavbar />
         <h2 className="py-10 text-center text-2xl font-bold lg:py-16 lg:text-4xl">
@@ -86,9 +174,48 @@ export default function WarmUpPage() {
             );
           })}
         </div>
-        <button className="mt-12 rounded-md bg-primary-dark px-6 py-2.5 font-medium text-white">
+        <button
+          onClick={() => {
+            //Exam is not started (startTime > now)
+            if (
+              getExamStatus.data?.status == ExamStatus.NOT_STARTED &&
+              getExamStatus.data.startsAt.getTime() > Date.now()
+            ) {
+              setError(
+                "Exam belum dimulai. Silahkan coba lagi sesuai jadwal exam."
+              );
+              //Exam is already started
+            } else if (getExamStatus.data?.status == ExamStatus.STARTED) {
+              //on-going exam
+              if (getExamStatus.data?.timeRemaining > 0) {
+                openModal();
+              } else if (getExamStatus.data?.timeRemaining == 0) {
+                setError(
+                  "Exam telah selesai. Jawaban Anda telah disimpan server."
+                );
+              }
+            } else if (getExamStatus.data?.status == ExamStatus.SUBMITTED) {
+              setError("Exam telah dikumpulkan.");
+            } else {
+              setError(
+                "Mohon maaf, terjadi kesalahan pada server. Silahkan coba lagi!"
+              );
+            }
+          }}
+          className={`${
+            getExamStatus.data?.status == ExamStatus.STARTED &&
+            getExamStatus.data?.timeRemaining == 0
+              ? //active
+                "opacity-100"
+              : //inactive
+                "opacity-75"
+          } z-30 mt-12 rounded-md bg-primary-dark px-6 py-2.5 font-medium text-white`}
+        >
           Mulai Warm-Up
         </button>
+        <p className="mt-4 px-8 text-center text-sm text-red-500 lg:px-0">
+          {error}
+        </p>
       </div>
       <div>
         <div className="absolute bottom-0 left-1/2 -z-[5] flex w-[110%] -translate-x-1/2 justify-between lg:w-full">
