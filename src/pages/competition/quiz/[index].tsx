@@ -37,7 +37,6 @@ export default function Quiz() {
         void router.push("/auth/login");
       } else {
         const { accessToken, username } = payload;
-
         setTeam(username);
         setToken(accessToken);
       }
@@ -293,6 +292,7 @@ export default function Quiz() {
             <IoTime size={24} className="fill-primary-dark" />
             <p className="font-medium">
               <Countdown
+                key={Date.now() + remainingTime}
                 date={Date.now() + remainingTime}
                 autoStart
                 renderer={renderer}
@@ -489,6 +489,7 @@ export default function Quiz() {
           <IoTime size={24} className="fill-primary-dark" />
           <p className="font-medium">
             <Countdown
+              key={Date.now() + remainingTime}
               date={Date.now() + remainingTime}
               renderer={renderer}
               autoStart
