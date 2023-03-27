@@ -24,7 +24,7 @@ export default function Quiz() {
   const { setTeam, team } = useContext(TeamContext) as TeamContextType;
 
   const router = useRouter();
-  const index = parseInt(router.query.index as string);
+  const index = parseInt(router.query.index as string) - 1;
 
   const { questionQuery, questionStatusQuery, answer, flag } = useExam(
     index,
@@ -86,7 +86,7 @@ export default function Quiz() {
 
   if (questionQuery.error || questionStatusQuery.error) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex flex-col h-screen items-center justify-center">
         <h1 className="text-2xl font-bold">Something went wrong</h1>
         <h2>
           {questionQuery.error?.message || questionStatusQuery.error?.message}
@@ -1352,7 +1352,7 @@ export default function Quiz() {
         {/* Content Mobile */}
 
         <div className="flex h-[86vh] w-full flex-col items-center space-y-4 overflow-y-scroll bg-[#F4F4F4] px-5 py-6 lg:hidden">
-          <h3 className="text-lg font-semibold">Nomor {index + 1}</h3>
+          <h3 className="text-lg font-semibold">Nomor {questionQuery.data?.index && questionQuery.data.index+1} </h3>
           <div className="flex h-auto w-full flex-col items-center justify-start space-y-4 rounded-xl bg-white p-6 shadow-2xl">
             {questionQuery.isLoading ? (
               <div role="status" className="max-w-sm animate-pulse">
@@ -1440,7 +1440,7 @@ export default function Quiz() {
             </button>
           </div>
           <div className="flex h-full w-full flex-col items-center space-y-8  py-8">
-            <h3 className="text-xl font-bold">Nomor {index + 1}</h3>
+            <h3 className="text-xl font-bold">Nomor {questionQuery.data?.index && questionQuery.data.index+1}</h3>
             <div className="flex h-[65vh] w-[80%] flex-col items-start justify-start space-y-4 overflow-y-scroll rounded-xl bg-white p-6 shadow-2xl">
               {questionQuery.isLoading ? (
                 <div role="status" className="max-w-sm animate-pulse">
@@ -1560,8 +1560,12 @@ export default function Quiz() {
               {questionStatusQuery?.data &&
                 index <
                   questionStatusQuery.data.examQuestionsStatus.length - 1 && (
-                  <Link href={`/competition/quiz/${index + 1}`}>
+                  <Link href={`/competition/quiz/${index + 2}`}
+                  className='flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-3 shadow-md'>
                     <IoChevronForward size={24} className="text-white" />
+                    <p className="text-sm font-medium text-white">
+                      Soal selanjutnya
+                    </p>
                   </Link>
                 )}
             </div>
@@ -1608,7 +1612,7 @@ export default function Quiz() {
 
           {questionStatusQuery?.data &&
             index < questionStatusQuery.data.examQuestionsStatus.length - 1 && (
-              <Link href={`/competition/quiz/${index + 1}`}>
+              <Link href={`/competition/quiz/${index + 2}`}>
                 <IoChevronForward size={24} className="text-white" />
               </Link>
             )}

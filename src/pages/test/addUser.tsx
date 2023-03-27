@@ -13,14 +13,14 @@ const addUser: NextPage = () => {
   });
   const login = api.user.login.useMutation({
     onSuccess: (accessToken) => {
-      setToken(accessToken);
+      setToken(accessToken.accessToken);
     },
   });
 
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (accessToken) => {
       if (!accessToken) return;
-      setToken(accessToken);
+      setToken(accessToken.accessToken);
     },
   });
 

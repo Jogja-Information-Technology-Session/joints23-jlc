@@ -7,9 +7,9 @@ import { TRPCError } from "@trpc/server";
 export const refreshToken = publicProcedure.mutation(async ({ ctx }) => {
   try {
     const { cookies } = ctx;
-
-    if (!("jid" in cookies)) throw new TRPCError({ code: "FORBIDDEN" });
     const { jid } = cookies;
+
+    if (!jid) throw new TRPCError({ code: "FORBIDDEN" });
 
     const payload = jwt.verify(jid, env.JWT_REFRESHTOKEN_SECRET);
 

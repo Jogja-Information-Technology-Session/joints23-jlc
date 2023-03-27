@@ -6,7 +6,7 @@ const CreateExam: NextPage = () => {
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (accessToken) => {
       if (!accessToken) return;
-      setToken(accessToken);
+      setToken(accessToken.accessToken);
     },
   });
 
