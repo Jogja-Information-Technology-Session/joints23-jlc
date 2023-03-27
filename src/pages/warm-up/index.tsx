@@ -65,8 +65,7 @@ export default function WarmUpPage() {
             });
         }
       },
-      retry: 0,
-      enabled: false,
+      retry: 0
     }
   );
 
@@ -204,7 +203,7 @@ export default function WarmUpPage() {
           }}
           className={`${
             getExamStatus.data?.status == ExamStatus.STARTED &&
-            getExamStatus.data?.timeRemaining == 0
+            getExamStatus.data?.timeRemaining !== 0
               ? //active
                 "opacity-100"
               : //inactive

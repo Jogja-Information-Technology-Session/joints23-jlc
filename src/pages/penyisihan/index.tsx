@@ -84,8 +84,7 @@ export default function PenyisihanPage() {
             });
         }
       },
-      retry: 0,
-      enabled: false,
+      retry: 0
     }
   );
 
@@ -195,6 +194,7 @@ export default function PenyisihanPage() {
         </div>
         <button
           onClick={() => {
+            console.log(getExamStatus.status);
             //Exam is not started (startTime > now)
             if (
               getExamStatus.data?.status == ExamStatus.NOT_STARTED &&
@@ -223,7 +223,7 @@ export default function PenyisihanPage() {
           }}
           className={`${
             getExamStatus.data?.status == ExamStatus.STARTED &&
-            getExamStatus.data?.timeRemaining == 0
+            getExamStatus.data?.timeRemaining !== 0
               ? //active
                 "opacity-100"
               : //inactive
