@@ -65,7 +65,7 @@ export default function WarmUpPage() {
             });
         }
       },
-      retry: 0
+      retry: 0,
     }
   );
 
@@ -121,7 +121,7 @@ export default function WarmUpPage() {
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-primary-dark px-4 py-2 text-sm font-medium text-white"
                       onClick={() => {
-                        void router.push("competition/quiz/warm-up");
+                        void router.push("competition/quiz");
                         closeModal();
                       }}
                     >
@@ -184,7 +184,10 @@ export default function WarmUpPage() {
                 "Exam belum dimulai. Silahkan coba lagi sesuai jadwal exam."
               );
               //Exam is already started
-            } else if (getExamStatus.data?.status == ExamStatus.STARTED) {
+            } else if (
+              getExamStatus.data?.status == ExamStatus.STARTED ||
+              getExamStatus.data?.status == ExamStatus.NOT_STARTED
+            ) {
               //on-going exam
               if (getExamStatus.data?.timeRemaining > 0) {
                 openModal();
@@ -193,7 +196,10 @@ export default function WarmUpPage() {
                   "Exam telah selesai. Jawaban Anda telah disimpan server."
                 );
               }
-            } else if (getExamStatus.data?.status == ExamStatus.SUBMITTED) {
+            } else if (
+              getExamStatus.data?.status == ExamStatus.SUBMITTED ||
+              getExamStatus.data?.status == ExamStatus.GRADED
+            ) {
               setError("Exam telah dikumpulkan.");
             } else {
               setError(
@@ -202,7 +208,8 @@ export default function WarmUpPage() {
             }
           }}
           className={`${
-            getExamStatus.data?.status == ExamStatus.STARTED &&
+            (getExamStatus.data?.status == ExamStatus.STARTED ||
+              getExamStatus.data?.status == ExamStatus.NOT_STARTED) &&
             getExamStatus.data?.timeRemaining !== 0
               ? //active
                 "opacity-100"

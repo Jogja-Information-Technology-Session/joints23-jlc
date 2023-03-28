@@ -84,7 +84,7 @@ export default function PenyisihanPage() {
             });
         }
       },
-      retry: 0
+      retry: 0,
     }
   );
 
@@ -126,11 +126,11 @@ export default function PenyisihanPage() {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Mulai sesi Warm-Up?
+                    Mulai sesi Penyisihan?
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Jika Anda memulai sesi Warm-Up, sesi akan dimulai dan
+                      Jika Anda memulai sesi Penyisihan, sesi akan dimulai dan
                       tidak dapat dibatalkan
                     </p>
                   </div>
@@ -140,7 +140,7 @@ export default function PenyisihanPage() {
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-primary-dark px-4 py-2 text-sm font-medium text-white"
                       onClick={() => {
-                        void router.push("competition/quiz/warm-up");
+                        void router.push("competition/quiz");
                         closeModal();
                       }}
                     >
@@ -194,7 +194,6 @@ export default function PenyisihanPage() {
         </div>
         <button
           onClick={() => {
-            console.log(getExamStatus.status);
             //Exam is not started (startTime > now)
             if (
               getExamStatus.data?.status == ExamStatus.NOT_STARTED &&
@@ -204,7 +203,10 @@ export default function PenyisihanPage() {
                 "Exam belum dimulai. Silahkan coba lagi sesuai jadwal exam."
               );
               //Exam is already started
-            } else if (getExamStatus.data?.status == ExamStatus.STARTED) {
+            } else if (
+              getExamStatus.data?.status == ExamStatus.STARTED ||
+              getExamStatus.data?.status == ExamStatus.NOT_STARTED
+            ) {
               //on-going exam
               if (getExamStatus.data?.timeRemaining > 0) {
                 openModal();
@@ -213,7 +215,10 @@ export default function PenyisihanPage() {
                   "Exam telah selesai. Jawaban Anda telah disimpan server."
                 );
               }
-            } else if (getExamStatus.data?.status == ExamStatus.SUBMITTED) {
+            } else if (
+              getExamStatus.data?.status == ExamStatus.SUBMITTED ||
+              getExamStatus.data?.status == ExamStatus.GRADED
+            ) {
               setError("Exam telah dikumpulkan.");
             } else {
               setError(
@@ -222,7 +227,8 @@ export default function PenyisihanPage() {
             }
           }}
           className={`${
-            getExamStatus.data?.status == ExamStatus.STARTED &&
+            (getExamStatus.data?.status == ExamStatus.STARTED ||
+              getExamStatus.data?.status == ExamStatus.NOT_STARTED) &&
             getExamStatus.data?.timeRemaining !== 0
               ? //active
                 "opacity-100"
