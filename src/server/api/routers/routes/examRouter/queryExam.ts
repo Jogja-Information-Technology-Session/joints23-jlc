@@ -18,9 +18,14 @@ export const getExamStatus = privateProcedure
     const { examType } = input;
     const exam = await getExamByUserId(userId, examType, ctx.prisma);
 
+    const date = new Date();
+    const isActive = date >= exam.startTime && date <= exam.endTime;
+
     return {
       startsAt: exam.startTime,
+      endsAt: exam.endTime,
       status: exam.status,
       timeRemaining: getTimeRemaining(exam),
+      isActive: isActive,
     };
   });

@@ -227,9 +227,7 @@ export default function PenyisihanPage() {
             }
           }}
           className={`${
-            (getExamStatus.data?.status == ExamStatus.STARTED ||
-              getExamStatus.data?.status == ExamStatus.NOT_STARTED) &&
-            getExamStatus.data?.timeRemaining !== 0
+            getExamStatus.data?.isActive
               ? //active
                 "opacity-100"
               : //inactive
