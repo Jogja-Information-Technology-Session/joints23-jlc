@@ -189,11 +189,18 @@ export async function checkExamStatus(exam: Exam) {
     });
 
   // Check if current time is less than end time
-  if (currentTime > exam.endTime.getTime())
+  if (currentTime > exam.endTime.getTime()) {
+    // check if submitted / graded
+    if (exam.status !== ExamStatus.GRADED) {
+      // grade exam
+      await gradeExam(exam, prisma);
+    }
+
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Exam has already ended!",
     });
+  }
 
   // Change exam status
   if (exam.status === ExamStatus.NOT_STARTED) {

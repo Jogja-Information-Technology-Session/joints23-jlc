@@ -131,5 +131,11 @@ export const submitExam = privateProcedure
     // grade exam
     const updatedExam = await gradeExam(exam, ctx.prisma);
 
-    return updatedExam;
+    if (!updatedExam)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to grade exam!",
+      });
+
+    return true;
   });
