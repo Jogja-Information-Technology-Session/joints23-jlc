@@ -2,11 +2,12 @@ import { api } from "~/utils/api";
 
 export default function useExam(index: number, team: string) {
   const utils = api.useContext();
+  const examType = "PENYISIHAN";
 
   const questionQuery = api.exam.getExamQuestion.useQuery(
     {
       index: index,
-      examType: "WARM_UP",
+      examType: examType,
     },
     {
       enabled: !!team,
@@ -14,7 +15,7 @@ export default function useExam(index: number, team: string) {
   );
   const questionStatusQuery = api.exam.getExamQuestionStatus.useQuery(
     {
-      examType: "WARM_UP",
+      examType: examType,
     },
     {
       enabled: !!team,
@@ -34,7 +35,7 @@ export default function useExam(index: number, team: string) {
   });
 
   const examStatus = api.exam.getExamStatus.useQuery({
-    examType: "WARM_UP",
+    examType: examType,
   });
 
   return {

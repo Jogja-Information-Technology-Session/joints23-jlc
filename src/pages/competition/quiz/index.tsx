@@ -25,19 +25,18 @@ export default function Quiz() {
   const { setTeam, team } = useContext(TeamContext) as TeamContextType;
 
   const router = useRouter();
+  const examType = "PENYISIHAN";
 
   useEffect(() => {
-    if(!router.query.index) {
-      setIndex(0)
-      return
-    } 
-    setIndex(parseInt(router.query.index as string) - 1)
-  }, [router.query])
+    if (!router.query.index) {
+      setIndex(0);
+      return;
+    }
+    setIndex(parseInt(router.query.index as string) - 1);
+  }, [router.query]);
 
-  const { questionQuery, questionStatusQuery, answer, flag, examStatus } = useExam(
-    index,
-    "WARM_UP"
-  );
+  const { questionQuery, questionStatusQuery, answer, flag, examStatus } =
+    useExam(index, examType);
 
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (payload) => {
@@ -63,7 +62,7 @@ export default function Quiz() {
   const handleOptionChange = (optionId: string | undefined) => {
     if (!questionQuery.data || !optionId) return;
     answer.mutate({
-      examType: "WARM_UP",
+      examType: examType,
       index: index,
       optionId: optionId,
       examQuestionId: questionQuery.data.id,
@@ -73,7 +72,7 @@ export default function Quiz() {
   const handleFlagQuestion = () => {
     if (!questionQuery.data) return;
     flag.mutate({
-      examType: "WARM_UP",
+      examType: examType,
       index: index,
       examQuestionId: questionQuery.data.id,
     });
@@ -102,28 +101,31 @@ export default function Quiz() {
     );
   }
 
-  if (examStatus.isLoading) {
-    return <div></div>
+  if (examStatus?.isLoading) {
+    return <div></div>;
   }
 
-  if (examStatus.error) {
-    return <div>{examStatus.error.message}</div>
+  if (examStatus?.error) {
+    return <div>{examStatus?.error.message}</div>;
   }
 
-  if (examStatus.data?.status === "GRADED" || examStatus.data?.status === "SUBMITTED") {
+  if (
+    examStatus.data?.status === "GRADED" ||
+    examStatus.data?.status === "SUBMITTED"
+  ) {
     setTimeout(() => {
-      void router.push("/")
-    }, 5000)
+      void router.push("/");
+    }, 5000);
     return (
       <div className="flex h-screen flex-col items-center justify-center">
         <h1 className="text-2xl font-bold">Exam has ended</h1>
       </div>
-    )
+    );
   }
 
   if (examStatus.data?.status === "NOT_STARTED") {
-      void router.push("/")
-      return <div></div>
+    void router.push("/");
+    return <div></div>;
   }
 
   return (
@@ -991,7 +993,10 @@ export default function Quiz() {
               </h3>
               <div className="mt-5 grid grid-cols-5 gap-3 px-5">
                 {questionStatusQuery.data.examQuestionsStatus.map((item) => (
-                  <Link href={`/competition/quiz?index=${item.index+1}`} key={item.index}>
+                  <Link
+                    href={`/competition/quiz?index=${item.index + 1}`}
+                    key={item.index}
+                  >
                     <div className="relative flex aspect-square rounded-md bg-white p-1.5">
                       {item.isFlagged && (
                         <svg
@@ -1024,19 +1029,18 @@ export default function Quiz() {
                             </p>
                           )}
                         </div>
-                      ) : (
-                        item.isAnswered ?
+                      ) : item.isAnswered ? (
                         <div className="flex h-full w-full items-center justify-center rounded-sm bg-[#76A8E9]">
                           <p className="text-center font-semibold text-primary-dark">
                             {item.index + 1}
                           </p>
-                        </div>:
-                         <div className="flex h-full w-full items-center justify-center rounded-sm">
-                         <p className="text-center font-semibold text-primary-dark">
-                           {item.index + 1}
-                         </p>
-                       </div>
-
+                        </div>
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center rounded-sm">
+                          <p className="text-center font-semibold text-primary-dark">
+                            {item.index + 1}
+                          </p>
+                        </div>
                       )}
                     </div>
                   </Link>
@@ -1550,10 +1554,10 @@ export default function Quiz() {
                 </p>
               </button>
             )}
-            {questionStatusQuery?.data &&(
-              index <
-                questionStatusQuery.data.examQuestionsStatus.length - 1 ? 
-                (<Link
+            {questionStatusQuery?.data &&
+              (index <
+              questionStatusQuery.data.examQuestionsStatus.length - 1 ? (
+                <Link
                   href={`/competition/quiz?index=${index + 2}`}
                   className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-3 shadow-md"
                 >
@@ -1561,17 +1565,18 @@ export default function Quiz() {
                   <p className="text-sm font-medium text-white">
                     Soal selanjutnya
                   </p>
-                </Link>) : 
-                index == questionStatusQuery.data.examQuestionsStatus.length - 1 &&(
-                  <Link
-                  href={`/competition/quiz/submit`}
-                  className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-8 shadow-md"
-                >
-                  <p className="text-sm font-medium text-white">
-                    Submit
-                  </p>
                 </Link>
-                ))}
+              ) : (
+                index ==
+                  questionStatusQuery.data.examQuestionsStatus.length - 1 && (
+                  <Link
+                    href={`/competition/quiz/submit`}
+                    className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-8 shadow-md"
+                  >
+                    <p className="text-sm font-medium text-white">Submit</p>
+                  </Link>
+                )
+              ))}
           </div>
         </div>
       </div>
@@ -1614,17 +1619,19 @@ export default function Quiz() {
           </button>
         )}
 
-        {questionStatusQuery?.data && (
-          index < questionStatusQuery.data.examQuestionsStatus.length - 1 ? (
+        {questionStatusQuery?.data &&
+          (index < questionStatusQuery.data.examQuestionsStatus.length - 1 ? (
             <Link href={`/competition/quiz?index=${index + 2}`}>
               <IoChevronForward size={24} className="text-white" />
             </Link>
-          ) : 
-          index == questionStatusQuery.data.examQuestionsStatus.length - 1 &&
-          <Link href={`/competition/quiz/submit`}>
-              <p className=" text-white font-medium">Submit</p>
-            </Link>)}
-          
+          ) : (
+            index ==
+              questionStatusQuery.data.examQuestionsStatus.length - 1 && (
+              <Link href={`/competition/quiz/submit`}>
+                <p className=" font-medium text-white">Submit</p>
+              </Link>
+            )
+          ))}
       </nav>
     </div>
   );
