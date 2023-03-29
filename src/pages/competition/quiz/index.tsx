@@ -1456,7 +1456,7 @@ export default function Quiz() {
                 <>
                   {questionQuery.data.image && (
                     <Image
-                      src="/homepage/background.png"
+                      src={questionQuery.data.image}
                       alt="sample"
                       height={400}
                       width={300}
