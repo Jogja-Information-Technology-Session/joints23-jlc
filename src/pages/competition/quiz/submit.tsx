@@ -19,7 +19,7 @@ export default function SubmitExam() {
       if (!payload) {
         void router.push("/auth/login");
       } else {
-        const { accessToken, username } = payload;
+        const { accessToken } = payload;
         setToken(accessToken);
       }
     },
@@ -53,6 +53,9 @@ export default function SubmitExam() {
   }
 
   if (examStatus.data?.status === "NOT_STARTED") {
+    setTimeout(() => {
+        void router.push("/");
+      }, 3000);
     return (
       <div className=" mx-auto flex h-screen max-w-lg flex-col items-center justify-center gap-4 text-lg font-medium text-primary-dark ">
         <h1>Anda belum memulai ujian!</h1>
