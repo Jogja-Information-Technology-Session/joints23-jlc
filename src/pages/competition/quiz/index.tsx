@@ -36,7 +36,6 @@ export default function Quiz() {
 
   const { questionQuery, questionStatusQuery, answer, flag, examStatus } = useExam(
     index,
-    team,
     "WARM_UP"
   );
 
