@@ -10,13 +10,13 @@
 const config = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [{
-      protocol: 'https',
-      hostname: 'drive.google.com',
-      port: '',
-      pathname: '/**',
-
-    }]
+    // remotePatterns: [{
+    //   protocol: 'https',
+    //   hostname: 'drive.google.com',
+    //   port: '',
+    //   pathname: '/**',
+    // }]
+    domains: ["drive.google.com"],
   },
 
   /**
