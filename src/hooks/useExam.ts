@@ -33,10 +33,15 @@ export default function useExam(index: number, team: string) {
     },
   });
 
+  const examStatus = api.exam.getExamStatus.useQuery({
+    examType: "WARM_UP",
+  });
+
   return {
     questionQuery,
     questionStatusQuery,
     answer,
     flag,
+    examStatus,
   };
 }
