@@ -112,7 +112,7 @@ export const submitExam = privateProcedure
       });
 
     // check exam status
-    if (exam.status !== ExamStatus.NOT_STARTED)
+    if (exam.status !== ExamStatus.STARTED)
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "You can't submit this exam!",

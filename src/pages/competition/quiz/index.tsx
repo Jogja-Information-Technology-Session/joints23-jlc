@@ -1527,10 +1527,10 @@ export default function Quiz() {
                 </p>
               </button>
             )}
-            {questionStatusQuery?.data &&
+            {questionStatusQuery?.data &&(
               index <
-                questionStatusQuery.data.examQuestionsStatus.length - 1 && (
-                <Link
+                questionStatusQuery.data.examQuestionsStatus.length - 1 ? 
+                (<Link
                   href={`/competition/quiz?index=${index + 2}`}
                   className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-3 shadow-md"
                 >
@@ -1538,8 +1538,17 @@ export default function Quiz() {
                   <p className="text-sm font-medium text-white">
                     Soal selanjutnya
                   </p>
+                </Link>) : 
+                index == questionStatusQuery.data.examQuestionsStatus.length - 1 &&(
+                  <Link
+                  href={`/competition/quiz/submit`}
+                  className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-8 shadow-md"
+                >
+                  <p className="text-sm font-medium text-white">
+                    Submit
+                  </p>
                 </Link>
-              )}
+                ))}
           </div>
         </div>
       </div>
@@ -1582,12 +1591,17 @@ export default function Quiz() {
           </button>
         )}
 
-        {questionStatusQuery?.data &&
-          index < questionStatusQuery.data.examQuestionsStatus.length - 1 && (
+        {questionStatusQuery?.data && (
+          index < questionStatusQuery.data.examQuestionsStatus.length - 1 ? (
             <Link href={`/competition/quiz?index=${index + 2}`}>
               <IoChevronForward size={24} className="text-white" />
             </Link>
-          )}
+          ) : 
+          index == questionStatusQuery.data.examQuestionsStatus.length - 1 &&
+          <Link href={`/competition/quiz/submit`}>
+              <p className=" text-white font-medium">Submit</p>
+            </Link>)}
+          
       </nav>
     </div>
   );
