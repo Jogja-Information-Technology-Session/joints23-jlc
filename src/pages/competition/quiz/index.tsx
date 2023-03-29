@@ -17,7 +17,6 @@ import useExam from "~/hooks/useExam";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { api, setToken } from "~/utils/api";
-import { setIn } from "formik";
 
 export default function Quiz() {
   const [remainingTime, setRemainingTime] = useState(0);
@@ -35,9 +34,10 @@ export default function Quiz() {
     setIndex(parseInt(router.query.index as string) - 1)
   }, [router.query])
 
-  const { questionQuery, questionStatusQuery, answer, flag } = useExam(
+  const { questionQuery, questionStatusQuery, answer, flag, examStatus } = useExam(
     index,
-    team
+    team,
+    "WARM_UP"
   );
 
   const refreshToken = api.user.refreshToken.useMutation({
@@ -101,6 +101,30 @@ export default function Quiz() {
         </h2>
       </div>
     );
+  }
+
+  if (examStatus.isLoading) {
+    return <div></div>
+  }
+
+  if (examStatus.error) {
+    return <div>{examStatus.error.message}</div>
+  }
+
+  if (examStatus.data?.status === "GRADED" || examStatus.data?.status === "SUBMITTED") {
+    setTimeout(() => {
+      void router.push("/")
+    }, 5000)
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <h1 className="text-2xl font-bold">Exam has ended</h1>
+      </div>
+    )
+  }
+
+  if (examStatus.data?.status === "NOT_STARTED") {
+      void router.push("/")
+      return <div></div>
   }
 
   return (
