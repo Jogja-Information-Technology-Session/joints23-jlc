@@ -134,7 +134,7 @@ export default function WarmUpPage() {
           </div>
         </Dialog>
       </Transition>
-      <div className="flex h-full w-full flex-col items-center">
+      <div className="flex h-full w-full flex-col items-center overflow-y-scroll">
         <PreExamNavbar />
         <h2 className="py-10 text-center text-2xl font-bold lg:py-16 lg:text-4xl">
           Warm Up Joints Logic Competition
