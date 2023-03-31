@@ -8,6 +8,7 @@ import PreExamNavbar from "~/components/preExam/preExamNavbar";
 import { api, setToken } from "~/utils/api";
 import { TeamContext } from "~/utils/context/teamContext";
 import type { TeamContextType } from "~/utils/context/teamContext";
+import Guidebook from "~/components/homepage/Guidebook";
 
 const Home: NextPage = () => {
   const { setTeam } = useContext(TeamContext) as TeamContextType;
@@ -63,21 +64,8 @@ const Home: NextPage = () => {
       </Head>
       <PreExamNavbar />
       <Hero />
-      <section className=" relative flex h-[600px] flex-col items-center overflow-hidden bg-[#223144] p-12 text-[#E6EAED] ">
-        <h1 className=" mt-8 text-5xl font-extrabold">Prepare to win</h1>
-        <h2 className=" mt-2 text-4xl font-semibold">
-          Read our guidebook now!
-        </h2>
-        <a
-          href="/guidebook"
-          className=" mt-8 rounded-xl bg-white px-4 py-3 font-bold text-[#223144]"
-        >
-          Download Guidebook
-        </a>
-        <div className="absolute -bottom-[256px] h-[512px] w-[512px] rounded-full border-8 border-[#CC3737] bg-white"></div>
-        <div className="absolute -bottom-[288px] h-[576px] w-[576px] rounded-full border-2 border-[#CC3737]"></div>
-      </section>
-      <section className=" relative min-h-[700px] text-[#223144]">
+      <Guidebook />
+      <section className="relative min-h-[700px] overflow-x-hidden px-20 text-[#223144]">
         <Image
           src="/homepage/background.png"
           alt="bg"
@@ -85,9 +73,9 @@ const Home: NextPage = () => {
           className=" -z-10 object-cover"
           quality={100}
         />
-        <div className=" flex h-full flex-col items-center ">
+        <div className=" flex h-full flex-col items-start ">
           <h1 className=" mt-16 text-5xl font-extrabold">Timeline</h1>
-          <div className=" mt-16 flex flex-row items-start ">
+          <div className=" mt-16 flex flex-row items-start">
             {timelineItems.map((item, index) => (
               <div className=" flex flex-row" key={index}>
                 <div
