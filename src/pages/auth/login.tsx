@@ -242,7 +242,7 @@ export default function LoginPage() {
           />
         </svg>
         <p className="mt-10 self-start text-start text-xl font-bold text-primary-dark">
-          Please sign in
+           Sign in
         </p>
         <Formik
           initialValues={{
