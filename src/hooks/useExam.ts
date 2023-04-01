@@ -4,7 +4,7 @@ import { api } from "~/utils/api";
 
 export default function useExam(index: number) {
   const utils = api.useContext();
-  const examType = "PENYISIHAN";
+  const examType = "WARM_UP";
 
   const [started, setStarted] = useState(false);
 

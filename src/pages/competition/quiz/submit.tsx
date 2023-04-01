@@ -4,7 +4,7 @@ import { api, setToken } from "~/utils/api";
 
 export default function SubmitExam() {
   const router = useRouter();
-  const examType = "PENYISIHAN";
+  const examType = "WARM_UP";
 
   const examStatus = api.exam.getExamStatus.useQuery({
     examType: examType,
