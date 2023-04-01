@@ -49,12 +49,12 @@ export default function useExam(index: number) {
   });
 
   useEffect(() => {
-    if (examStatus.data?.status === "STARTED") {
+    if (examStatus.data?.isActive) {
       setStarted(true);
     } else {
       setStarted(false);
     }
-  }, [examStatus.data?.status]);
+  }, [examStatus.data?.isActive]);
 
 
   return {
