@@ -17,6 +17,7 @@ import useExam from "~/hooks/useExam";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { api, setToken } from "~/utils/api";
+import { date } from "zod";
 
 export default function Quiz() {
   const [remainingTime, setRemainingTime] = useState(0);
@@ -139,12 +140,25 @@ export default function Quiz() {
   }
 
   if (!examStatus.data?.isActive) {
-    void router.push("/");
-    return (
-      <div className="flex h-screen flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold">Ujian belum dimulai</h1>
-      </div>
-    );
+    setTimeout(() => {
+      void router.push("/");
+    }, 5000);
+
+    if (Date.now() > new Date(examStatus.data?.endsAt).getTime()) {
+      return (
+        <div className="flex h-screen flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold">
+            Ujian telah selesai, jawaban anda sudah disimpan
+          </h1>
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex h-screen flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold">Ujian belum dimulai</h1>
+        </div>
+      );
+    }
   }
 
   return (
@@ -1396,13 +1410,14 @@ export default function Quiz() {
                 </p>
                 <div className="flex w-full flex-col space-y-4">
                   {questionQuery.data.options.map((option, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start space-x-4"
-                    >
-                      <button type="button" onClick={() => {
-                        handleOptionChange(option?.id);
-                      }} className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
+                    <div key={index} className="flex items-start space-x-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleOptionChange(option?.id);
+                        }}
+                        className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs"
+                      >
                         <div
                           className={
                             option?.id == questionQuery.data.answer
