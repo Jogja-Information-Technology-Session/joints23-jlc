@@ -138,7 +138,7 @@ export default function Quiz() {
     );
   }
 
-  if (examStatus.data?.status === "NOT_STARTED") {
+  if (!examStatus.data?.isActive) {
     void router.push("/");
     return (
       <div className="flex h-screen flex-col items-center justify-center">
