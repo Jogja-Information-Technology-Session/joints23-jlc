@@ -35,8 +35,14 @@ export default function Quiz() {
     setIndex(parseInt(router.query.index as string) - 1);
   }, [router.query]);
 
-  const { questionQuery, questionStatusQuery, answer, flag, examStatus } =
-    useExam(index, examType);
+  const {
+    questionQuery,
+    questionStatusQuery,
+    answer,
+    flag,
+    examStatus,
+    clearAnswer,
+  } = useExam(index);
 
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (payload) => {
@@ -72,6 +78,15 @@ export default function Quiz() {
   const handleFlagQuestion = () => {
     if (!questionQuery.data) return;
     flag.mutate({
+      examType: examType,
+      index: index,
+      examQuestionId: questionQuery.data.id,
+    });
+  };
+
+  const handleClearAnswer = () => {
+    if (!questionQuery.data) return;
+    clearAnswer.mutate({
       examType: examType,
       index: index,
       examQuestionId: questionQuery.data.id,
@@ -118,14 +133,18 @@ export default function Quiz() {
     }, 5000);
     return (
       <div className="flex h-screen flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold">Exam has ended</h1>
+        <h1 className="text-2xl font-bold">Jawaban anda telah tersubmit</h1>
       </div>
     );
   }
 
   if (examStatus.data?.status === "NOT_STARTED") {
     void router.push("/");
-    return <div></div>;
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <h1 className="text-2xl font-bold">Ujian belum dimulai</h1>
+      </div>
+    );
   }
 
   return (
@@ -1377,14 +1396,13 @@ export default function Quiz() {
                 </p>
                 <div className="flex w-full flex-col space-y-4">
                   {questionQuery.data.options.map((option, index) => (
-                    <button
+                    <div
                       key={index}
                       className="flex items-start space-x-4"
-                      onClick={() => {
-                        handleOptionChange(option?.id);
-                      }}
                     >
-                      <div className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
+                      <button type="button" onClick={() => {
+                        handleOptionChange(option?.id);
+                      }} className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
                         <div
                           className={
                             option?.id == questionQuery.data.answer
@@ -1402,12 +1420,19 @@ export default function Quiz() {
                             ? "D"
                             : "E"}
                         </div>
-                      </div>
+                      </button>
                       <p className="pt-1 text-start text-sm">
                         <Latex>{option?.prompt}</Latex>
                       </p>
-                    </button>
+                    </div>
                   ))}
+                  <button
+                    type="button"
+                    onClick={handleClearAnswer}
+                    className="mr-2 mb-2 w-fit rounded-lg border border-gray-200 bg-white py-2.5 px-5 text-sm font-medium text-primary-dark hover:border-primary-dark hover:bg-gray-100 focus:z-10  focus:outline-none"
+                  >
+                    Clear Answer
+                  </button>
                 </div>
               </>
             )
@@ -1467,14 +1492,14 @@ export default function Quiz() {
                   </p>
                   <div className="flex w-full flex-col space-y-4">
                     {questionQuery.data.options.map((option, index) => (
-                      <button
+                      <div
                         key={index}
                         className="flex items-start space-x-4"
                         onClick={() => {
                           handleOptionChange(option?.id);
                         }}
                       >
-                        <div className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
+                        <button className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
                           <div
                             className={
                               option?.id == questionQuery.data.answer
@@ -1492,12 +1517,19 @@ export default function Quiz() {
                               ? "D"
                               : "E"}
                           </div>
-                        </div>
+                        </button>
                         <p className="text-md pt-0.5 text-start">
                           <Latex>{option?.prompt}</Latex>
                         </p>
-                      </button>
+                      </div>
                     ))}
+                    <button
+                      type="button"
+                      onClick={handleClearAnswer}
+                      className="mr-2 mb-2 w-fit rounded-lg border border-gray-200 bg-white py-2.5 px-5 text-sm font-medium text-primary-dark hover:border-primary-dark hover:bg-gray-100 focus:z-10 focus:outline-none"
+                    >
+                      Clear Answer
+                    </button>
                   </div>
                 </>
               )
