@@ -16,7 +16,7 @@ export default function Guidebook() {
           read our guidebook now!
         </h2>
         <a
-          href="/guidebook"
+          href="https://drive.google.com/file/d/143Egc3voJrd2D9Z0KT8rJ3Wbn2l2OEdm/view"
           className="relative z-10 mt-8 mb-[28vw] rounded-md bg-[#E6EAED] px-3 py-2 font-bold text-[#223144] xl:text-lg"
         >
           Download Guidebook
