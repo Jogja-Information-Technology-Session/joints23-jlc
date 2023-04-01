@@ -25,7 +25,7 @@ export default function Quiz() {
   const { setTeam, team } = useContext(TeamContext) as TeamContextType;
 
   const router = useRouter();
-  const examType = "PENYISIHAN";
+  const examType = "WARM_UP";
 
   useEffect(() => {
     if (!router.query.index) {
@@ -1365,9 +1365,15 @@ export default function Quiz() {
             questionQuery.data && (
               <>
                 {questionQuery.data.image && (
-                  <Image
+                  // <Image
+                  //   src={questionQuery.data.image}
+                  //   alt="sample"
+                  //   height={400}
+                  //   width={300}
+                  // />
+                  <img
                     src={questionQuery.data.image}
-                    alt="sample"
+                    alt="question image"
                     height={400}
                     width={300}
                   />
@@ -1455,9 +1461,15 @@ export default function Quiz() {
               questionQuery.data && (
                 <>
                   {questionQuery.data.image && (
-                    <Image
+                    // <Image
+                    //   src={questionQuery.data.image}
+                    //   alt="sample"
+                    //   height={400}
+                    //   width={300}
+                    // />
+                    <img
                       src={questionQuery.data.image}
-                      alt="sample"
+                      alt="question image"
                       height={400}
                       width={300}
                     />

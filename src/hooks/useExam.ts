@@ -2,7 +2,7 @@ import { api } from "~/utils/api";
 
 export default function useExam(index: number, team: string) {
   const utils = api.useContext();
-  const examType = "PENYISIHAN";
+  const examType = "WARM_UP";
 
   const questionQuery = api.exam.getExamQuestion.useQuery(
     {
