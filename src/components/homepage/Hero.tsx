@@ -3,37 +3,100 @@ import { CrystalLeft, CrystalRight } from "./assets/Crystals";
 
 export default function Hero() {
   return (
-    <main className="relative flex min-h-screen flex-col items-center  justify-start  overflow-hidden px-5">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-5 lg:px-20 2xl:px-40">
       <Image
         src="/homepage/background.png"
         alt="bg"
         fill
-        className=" -z-10 object-cover"
+        className="-z-10 object-cover"
         quality={100}
       />
 
-      <div className=" relative mb-8 mt-32 h-7 w-full max-w-6xl rounded-b-xl bg-[#223144]   md:mt-48 md:h-20 ">
-        <div className=" absolute bottom-0 left-0 h-16 w-20 overflow-hidden rounded-bl-xl md:h-52 md:w-72  ">
-          <CrystalLeft />
+      <div className="relative z-10 mb-8 h-7 w-full max-w-6xl rounded-b-xl bg-[#223144] lg:mb-12 lg:h-16 2xl:h-20">
+        <div className="absolute -bottom-1 left-0 my-1 h-80 w-1/4 overflow-hidden rounded-bl-xl lg:w-[30%]">
+          <img
+            src="/homepage/hero/crystal_header.svg"
+            alt="jlc"
+            className="absolute -bottom-1 -left-3 w-full lg:-bottom-5 lg:-left-5"
+          />
         </div>
-        <div className=" absolute bottom-0 right-0 h-16 w-20 overflow-hidden rounded-bl-xl md:h-52 md:w-72  ">
-          <CrystalRight />
+        <div className="absolute -bottom-1 right-0 my-1 h-80 w-1/4 overflow-hidden rounded-br-xl lg:w-[30%]">
+          <img
+            src="/homepage/hero/crystal_header.svg"
+            alt="jlc"
+            className="absolute -bottom-1 -right-3 w-full scale-x-flip lg:-bottom-5 lg:-right-5"
+          />
         </div>
 
-        <div className=" absolute bottom-1 left-0 right-0 mx-auto block h-16 w-16 rounded-full border-2 border-white  bg-[#223144] md:bottom-4 md:h-44 md:w-44">
+        <div className="absolute bottom-1 left-0 right-0 z-10 mx-auto block aspect-square h-auto w-1/4 rounded-full border-2 border-[#E6EAED] bg-[#223144]  sm:h-24 sm:w-24 lg:bottom-4 lg:h-44 lg:w-44 lg:border-4">
           <Image
             src="/homepage/jlc_logo.svg"
             alt="jlc"
             fill
-            className=" p-2 md:p-8 "
+            className="p-3 lg:p-6"
           />
         </div>
       </div>
-      <svg
+
+      {/* bg crystal 2 biji yang di atas */}
+      <img
+        src="/homepage/hero/crystal_bg.svg"
+        alt=""
+        className="absolute top-0 -left-[14%] w-1/2 scale-x-flip sm:-top-[6%] md:-top-[20%] md:left-[1%] md:w-[44%] 2xl:left-[10%] 2xl:w-[36%]"
+      />
+      <img
+        src="/homepage/hero/crystal_bg.svg"
+        alt=""
+        className="absolute top-0 -right-[14%] w-1/2 sm:-top-[6%] md:-top-[20%] md:right-[1%] md:w-[44%] 2xl:right-[10%] 2xl:w-[36%]"
+      />
+
+      <div className="z-10 flex max-w-6xl flex-col items-center rounded-xl bg-white px-4 py-5 text-[#223144] shadow-lg sm:p-6 lg:px-8 lg:py-10 2xl:px-12">
+        <h1 className="mb-2 text-xl font-extrabold lg:mb-10 lg:text-5xl lg:font-extrabold">
+          Joints Logic Competition
+        </h1>
+        <p className="text-justify text-sm font-medium lg:px-10 lg:text-base">
+          JOINTS Logic Competition merupakan kompetisi yang memperlombakan
+          kemampuan logika berpikir dan pemikiran matematis untuk menyelesaikan
+          soal permasalahan logika dan aritmatika. Untuk kompetisi ini, target
+          peserta yang dituju adalah siswa SMA dan SLTA atau sederajat. Untuk
+          pelaksanaannya dilakukan secara beregu/tim dengan anggota 1-2 siswa
+          yang berasal dari instansi yang sama. Perlombaan akan dilaksanakan
+          secara hybrid dalam 3 babak yaitu Penyisihan, Final Tahap I, dan Final
+          Tahap II.
+        </p>
+      </div>
+
+      <img
+        src="/homepage/hero/crystal_footer.svg"
+        alt=""
+        className="absolute bottom-0 left-0 z-[1] w-[48%] md:w-[36%]"
+      />
+      <img
+        src="/homepage/hero/crystal_footer.svg"
+        alt=""
+        className="absolute bottom-0 right-0 z-[1] w-[48%] scale-x-flip md:w-[36%]"
+      />
+      <img
+        src="/homepage/hero/crystal_footer_line.svg"
+        alt=""
+        className="absolute bottom-0 left-0 w-1/2 md:hidden"
+      />
+      <img
+        src="/homepage/hero/crystal_footer_line.svg"
+        alt=""
+        className="absolute bottom-0 right-0 w-1/2 scale-x-flip md:hidden"
+      />
+      <img
+        src="/homepage/hero/crystal_footer_line_lg.svg"
+        alt=""
+        className="absolute bottom-0 right-1/2 hidden w-full translate-x-1/2 md:inline-block"
+      />
+
+      {/* <svg
         viewBox="0 0 177 111"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className=" absolute bottom-0 right-0 w-1/2 md:w-1/3"
+        className=" absolute bottom-0 right-0 w-1/2 lg:w-1/3"
       >
         <path
           d="M204.678 97.904L173.322 78.1238L162.389 112.809L204.678 97.904Z"
@@ -245,7 +308,7 @@ export default function Hero() {
         viewBox="0 0 178 111"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="absolute bottom-0 left-0 w-1/2 md:w-1/3"
+        className="absolute bottom-0 left-0 w-1/2 lg:w-1/3"
       >
         <path
           d="M-27.1467 97.904L4.20919 78.1238L15.1417 112.809L-27.1467 97.904Z"
@@ -476,16 +539,16 @@ export default function Hero() {
           <path
             d="M215.815 70.6958L175.969 59.3369L198.248 91.6007L215.815 70.6958Z"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M221.551 28.6277L132.946 47.5763L189.745 0L221.551 28.6277Z"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M149.244 102.867C149.101 102.723 148.918 102.625 148.719 102.585C148.52 102.545 148.314 102.565 148.127 102.643C147.939 102.72 147.779 102.851 147.666 103.02C147.553 103.188 147.493 103.387 147.493 103.589C147.493 103.792 147.553 103.991 147.666 104.159C147.779 104.328 147.939 104.459 148.127 104.536C148.314 104.614 148.52 104.634 148.719 104.594C148.918 104.554 149.101 104.455 149.244 104.312C149.434 104.12 149.542 103.86 149.542 103.589C149.542 103.319 149.434 103.059 149.244 102.867V102.867Z"
@@ -554,72 +617,72 @@ export default function Hero() {
           <path
             d="M50.4873 127.45L67.0457 146.055L53.5603 157.153L70.4619 114.647L77.6322 135.132L113.484 177.126L167.262 147.935L198.248 91.601L132.946 47.5583"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M167.262 147.934L188.773 162.274L144.214 212.462L167.262 147.934Z"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M188.773 162.274L209.772 142.301L167.262 147.935L148.312 103.892L132.947 47.5583"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M144.214 212.462L123.727 196.074L120.997 232.773L144.214 212.462Z"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M247.329 131.372L239.221 92.4968L205.418 123.352L167.262 147.934L123.727 196.074L81.7297 193.17L27.0968 244.04"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M221.541 28.5938L198.248 91.6004L148.311 103.891"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M205.418 123.352L148.311 103.892"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M144.215 212.462L165.726 236.02L226.033 298.371"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M-0.897898 125.227L-11.9966 139.74L-25.4819 144.006L-40.1658 143.663L28.8078 198.973L27.0972 244.04L97.6073 230.898L123.728 196.074L113.484 177.125L148.312 103.892L77.6328 135.131"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M28.8073 198.973L81.7295 193.17L97.6067 230.898L120.997 232.773"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M11.0506 153.439C10.697 153.439 10.4104 153.153 10.4104 152.799C10.4104 152.446 10.697 152.159 11.0506 152.159C11.4042 152.159 11.6908 152.446 11.6908 152.799C11.6908 153.153 11.4042 153.439 11.0506 153.439Z"
@@ -632,23 +695,23 @@ export default function Hero() {
           <path
             d="M35.1226 187.88L81.7299 193.17L20.2697 212.974L35.1226 187.88Z"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M-17.1177 122.84L11.0515 152.8L28.8083 198.973L-27.8733 224.113L-66.2858 183.271L-40.1653 143.663L-106.404 210.926"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M81.7301 193.17L53.0487 163.298L113.484 177.125"
             stroke="#E65251"
-            stroke-width="0.7"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="0.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </g>
       </svg>
@@ -661,16 +724,16 @@ export default function Hero() {
         <path
           d="M-35.8152 70.6958L4.03146 59.3369L-18.2478 91.6007L-35.8152 70.6958Z"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M-41.5509 28.6277L47.0541 47.5763L-9.74529 0L-41.5509 28.6277Z"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M30.7564 102.867C30.8994 102.723 31.0819 102.625 31.2807 102.585C31.4796 102.545 31.6859 102.565 31.8734 102.643C32.0609 102.72 32.2213 102.851 32.3341 103.02C32.4469 103.188 32.5072 103.387 32.5072 103.589C32.5072 103.792 32.4469 103.991 32.3341 104.159C32.2213 104.328 32.0609 104.459 31.8734 104.536C31.6859 104.614 31.4796 104.634 31.2807 104.594C31.0819 104.554 30.8994 104.455 30.7564 104.312C30.5656 104.12 30.4585 103.86 30.4585 103.589C30.4585 103.319 30.5656 103.059 30.7564 102.867V102.867Z"
@@ -739,72 +802,72 @@ export default function Hero() {
         <path
           d="M129.513 127.45L112.954 146.055L126.44 157.153L109.538 114.647L102.368 135.132L66.5161 177.126L12.7385 147.935L-18.2477 91.601L47.0537 47.5583"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M12.7385 147.934L-8.77258 162.274L35.786 212.462L12.7385 147.934Z"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M-8.77298 162.274L-29.7719 142.301L12.7381 147.935L31.6883 103.892L47.0533 47.5583"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M35.7864 212.462L56.2731 196.074L59.0029 232.773L35.7864 212.462Z"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M-67.3289 131.372L-59.2212 92.4968L-25.4182 123.352L12.7383 147.934L56.2726 196.074L98.2703 193.17L152.903 244.04"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M-41.5411 28.5938L-18.2478 91.6004L31.6886 103.891"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M-25.4181 123.352L31.6886 103.892"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M35.7855 212.462L14.2744 236.02L-46.0333 298.371"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M180.898 125.227L191.997 139.74L205.482 144.006L220.166 143.663L151.192 198.973L152.903 244.04L82.3927 230.898L56.2722 196.074L66.5155 177.125L31.6881 103.892L102.367 135.131"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M151.193 198.973L98.2705 193.17L82.3933 230.898L59.0026 232.773"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M168.949 153.439C169.303 153.439 169.59 153.153 169.59 152.799C169.59 152.446 169.303 152.159 168.949 152.159C168.596 152.159 168.309 152.446 168.309 152.799C168.309 153.153 168.596 153.439 168.949 153.439Z"
@@ -817,41 +880,25 @@ export default function Hero() {
         <path
           d="M144.877 187.88L98.2701 193.17L159.73 212.974L144.877 187.88Z"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M197.118 122.84L168.949 152.8L151.192 198.973L207.873 224.113L246.286 183.271L220.165 143.663L286.404 210.926"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M98.2699 193.17L126.951 163.298L66.5155 177.125"
           stroke="#E65251"
-          stroke-width="0.7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
-      </svg>
-
-      <div className="  z-10 flex max-w-6xl flex-col items-center rounded-xl bg-white px-4 py-5 text-[#223144] shadow-lg">
-        <h1 className=" mb-2 text-xl font-bold md:mb-10 md:mt-6 md:text-5xl md:font-extrabold">
-          Joints Logic Competition
-        </h1>
-        <p className="px-3 text-justify text-sm font-medium sm:px-10 sm:pb-10 md:text-base">
-          JOINTS Logic Competition merupakan kompetisi yang memperlombakan
-          kemampuan logika berpikir dan pemikiran matematis untuk menyelesaikan
-          soal permasalahan logika dan aritmatika. Untuk kompetisi ini, target
-          peserta yang dituju adalah siswa SMA dan SLTA atau sederajat. Untuk
-          pelaksanaannya dilakukan secara beregu/tim dengan anggota 1-2 siswa
-          yang berasal dari instansi yang sama. Perlombaan akan dilaksanakan
-          secara hybrid dalam 3 babak yaitu Penyisihan, Final Tahap I, dan Final
-          Tahap II.
-        </p>
-      </div>
+      </svg> */}
     </main>
   );
 }
