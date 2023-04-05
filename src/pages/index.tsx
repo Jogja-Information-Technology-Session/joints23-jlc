@@ -9,6 +9,7 @@ import { api, setToken } from "~/utils/api";
 import { TeamContext } from "~/utils/context/teamContext";
 import type { TeamContextType } from "~/utils/context/teamContext";
 import Guidebook from "~/components/homepage/Guidebook";
+import Timeline from "~/components/homepage/Timeline";
 
 const Home: NextPage = () => {
   const { setTeam } = useContext(TeamContext) as TeamContextType;
@@ -65,70 +66,9 @@ const Home: NextPage = () => {
       <PreExamNavbar />
       <Hero />
       <Guidebook />
-      <section className="relative min-h-[700px] overflow-x-hidden px-20 text-[#223144]">
-        <Image
-          src="/homepage/background.png"
-          alt="bg"
-          fill
-          className=" -z-10 object-cover"
-          quality={100}
-        />
-        <div className=" flex h-full flex-col items-start ">
-          <h1 className=" mt-16 text-5xl font-extrabold">Timeline</h1>
-          <div className=" mt-16 flex flex-row items-start">
-            {timelineItems.map((item, index) => (
-              <div className=" flex flex-row" key={index}>
-                <div
-                  className={`my-8  flex w-64  ${
-                    index % 2 === 0 ? "mt-40 flex-col" : "flex-col-reverse"
-                  } `}
-                >
-                  <div className=" flex h-[64px] w-[64px] items-center justify-center rounded-full bg-[#223344]">
-                    <h1 className=" text-4xl font-bold text-white">
-                      {index + 1}
-                    </h1>
-                  </div>
-                  {index % 2 === 0 ? (
-                    <div className="ml-8 -mt-4 border-l-2 border-[#223344] pt-8 pl-8  ">
-                      <h1 className=" mt-4 text-2xl font-extrabold">
-                        {item.title}
-                      </h1>
-                      <h1 className=" mt-2  font-semibold">{item.date}</h1>
-                    </div>
-                  ) : (
-                    <div className="ml-8 -mt-4 border-l-2 border-[#223344] pb-8 pl-8 ">
-                      <h1 className=" text-2xl font-extrabold ">
-                        {item.title}
-                      </h1>
-                      <h1 className=" mt-2  mb-4 font-semibold">{item.date}</h1>
-                    </div>
-                  )}
-                </div>
-                {index !== timelineItems.length - 1 && (
-                  <hr className="relative my-8 -ml-48 mt-48 h-[2px] w-32 border-0 bg-[#223344]" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Timeline />
     </>
   );
 };
-
-const timelineItems = [
-  {
-    title: "Pendaftaran Early Bird",
-    date: "1 s.d. 14 Februari 2023",
-  },
-  {
-    title: "Pendaftaran Reguler",
-    date: "15 s.d. 28 Februari 2023",
-  },
-  {
-    title: "Warmup Penyisihan",
-    date: "8 April 2023",
-  },
-];
 
 export default Home;
