@@ -44,7 +44,7 @@ export default function Countdown() {
     <>
       <section className="relative overflow-hidden bg-[#223344] px-10 pt-12 font-extrabold text-white lg:py-32">
         <p className="relative z-10 text-center text-xl sm:px-[24vw] md:px-[28vw] lg:px-[14vw] lg:text-5xl xl:px-[20vw] 2xl:px-[30vw]">
-          Penyisihan JPC 2023 akan dimulai dalam
+          Penyisihan JLC 2023 akan dimulai dalam
         </p>
         <div className="relative mx-auto mt-5 mb-32 grid max-w-xs grid-cols-4 place-items-center gap-x-3 lg:static lg:mt-10 lg:mb-0 lg:max-w-2xl lg:gap-x-12">
           <div className="relative z-10 lg:w-full">

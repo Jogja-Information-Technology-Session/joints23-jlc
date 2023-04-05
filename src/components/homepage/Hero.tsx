@@ -12,7 +12,7 @@ export default function Hero() {
         quality={100}
       />
 
-      <div className="relative z-10 mb-8 h-7 w-full max-w-6xl rounded-b-xl bg-[#223144] lg:mb-12 lg:h-16 2xl:h-20">
+      <div className="relative z-10 mb-8 h-7 w-full max-w-lg rounded-b-xl bg-[#223144] lg:mb-12 lg:h-16 lg:max-w-6xl 2xl:h-20">
         <div className="absolute -bottom-1 left-0 my-1 h-80 w-1/4 overflow-hidden rounded-bl-xl lg:w-[30%]">
           <img
             src="/homepage/hero/crystal_header.svg"
@@ -50,7 +50,7 @@ export default function Hero() {
         className="absolute top-0 -right-[14%] w-1/2 sm:-top-[6%] md:-top-[20%] md:right-[1%] md:w-[44%] 2xl:right-[10%] 2xl:w-[36%]"
       />
 
-      <div className="z-10 flex max-w-6xl flex-col items-center rounded-xl bg-white px-4 py-5 text-[#223144] shadow-lg sm:p-6 lg:px-8 lg:py-10 2xl:px-12">
+      <div className="z-10 flex max-w-lg flex-col items-center rounded-xl bg-white px-4 py-5 text-[#223144] shadow-lg sm:p-6 lg:max-w-6xl lg:px-8 lg:py-10 2xl:px-12">
         <h1 className="mb-2 text-xl font-extrabold lg:mb-10 lg:text-5xl lg:font-extrabold">
           Joints Logic Competition
         </h1>
