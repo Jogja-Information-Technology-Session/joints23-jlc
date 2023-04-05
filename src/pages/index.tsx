@@ -1,6 +1,5 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import router from "next/router";
 import { useContext, useEffect } from "react";
 import Hero from "~/components/homepage/Hero";
@@ -10,6 +9,7 @@ import { TeamContext } from "~/utils/context/teamContext";
 import type { TeamContextType } from "~/utils/context/teamContext";
 import Guidebook from "~/components/homepage/Guidebook";
 import Timeline from "~/components/homepage/Timeline";
+import Countdown from "~/components/homepage/Countdown";
 
 const Home: NextPage = () => {
   const { setTeam } = useContext(TeamContext) as TeamContextType;
@@ -67,6 +67,7 @@ const Home: NextPage = () => {
       <Hero />
       <Guidebook />
       <Timeline />
+      <Countdown />
     </>
   );
 };
