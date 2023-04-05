@@ -133,6 +133,7 @@ export default function Timeline() {
           <div className="flex h-full -translate-y-[5%] flex-col justify-between lg:translate-y-0 lg:flex-row lg:items-end">
             {bg1.map((item, i) => (
               <img
+                key={i}
                 src={`/homepage/timeline/${item}.svg`}
                 alt="bege"
                 className="h-full w-full scale-75 lg:h-[60%] lg:w-[60%]"
@@ -142,6 +143,7 @@ export default function Timeline() {
           <div className="flex h-full translate-y-[5%] flex-col justify-between lg:translate-y-[0%] lg:flex-row lg:items-start">
             {bg2.map((item, i) => (
               <img
+                key={i}
                 src={`/homepage/timeline/${item}.svg`}
                 alt="bege"
                 className="ml-auto h-full w-full scale-75 lg:m-0 lg:h-[60%] lg:w-[60%]"
