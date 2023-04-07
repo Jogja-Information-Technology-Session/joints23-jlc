@@ -4,9 +4,10 @@ import { api, setToken } from "~/utils/api";
 
 export default function SubmitExam() {
   const router = useRouter();
+  const examType = "WARM_UP";
 
   const examStatus = api.exam.getExamStatus.useQuery({
-    examType: "WARM_UP",
+    examType: examType,
   });
   const submitExam = api.exam.submitExam.useMutation({
     onSuccess: () => {
@@ -54,14 +55,15 @@ export default function SubmitExam() {
 
   if (examStatus.data?.status === "NOT_STARTED") {
     setTimeout(() => {
-        void router.push("/");
-      }, 3000);
+      void router.push("/");
+    }, 3000);
     return (
       <div className=" mx-auto flex h-screen max-w-lg flex-col items-center justify-center gap-4 text-lg font-medium text-primary-dark ">
         <h1>Anda belum memulai ujian!</h1>
       </div>
     );
   }
+
 
   return (
     <div className=" mx-auto flex h-screen max-w-lg flex-col items-center justify-center gap-4 text-lg font-medium text-primary-dark ">
@@ -76,7 +78,7 @@ export default function SubmitExam() {
 
         <button
           className="w-full rounded-xl border bg-primary-dark py-2 text-white transition-all active:border-primary-dark active:bg-white"
-          onClick={() => submitExam.mutate({ examType: "WARM_UP" })}
+          onClick={() => submitExam.mutate({ examType: examType })}
         >
           Submit
         </button>

@@ -134,7 +134,7 @@ export default function WarmUpPage() {
           </div>
         </Dialog>
       </Transition>
-      <div className="flex h-full w-full flex-col items-center">
+      <div className="flex h-full w-full flex-col items-center overflow-y-scroll">
         <PreExamNavbar />
         <h2 className="py-10 text-center text-2xl font-bold lg:py-16 lg:text-4xl">
           Warm Up Joints Logic Competition
@@ -191,7 +191,7 @@ export default function WarmUpPage() {
               //on-going exam
               if (getExamStatus.data?.timeRemaining > 0) {
                 openModal();
-              } else if (getExamStatus.data?.timeRemaining == 0) {
+              } else if (getExamStatus.data?.timeRemaining <= 0) {
                 setError(
                   "Exam telah selesai. Jawaban Anda telah disimpan server."
                 );

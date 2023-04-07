@@ -17,6 +17,7 @@ import useExam from "~/hooks/useExam";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { api, setToken } from "~/utils/api";
+import { date } from "zod";
 
 export default function Quiz() {
   const [remainingTime, setRemainingTime] = useState(0);
@@ -25,19 +26,24 @@ export default function Quiz() {
   const { setTeam, team } = useContext(TeamContext) as TeamContextType;
 
   const router = useRouter();
+  const examType = "WARM_UP";
 
   useEffect(() => {
-    if(!router.query.index) {
-      setIndex(0)
-      return
-    } 
-    setIndex(parseInt(router.query.index as string) - 1)
-  }, [router.query])
+    if (!router.query.index) {
+      setIndex(0);
+      return;
+    }
+    setIndex(parseInt(router.query.index as string) - 1);
+  }, [router.query]);
 
-  const { questionQuery, questionStatusQuery, answer, flag, examStatus } = useExam(
-    index,
-    "WARM_UP"
-  );
+  const {
+    questionQuery,
+    questionStatusQuery,
+    answer,
+    flag,
+    examStatus,
+    clearAnswer,
+  } = useExam(index);
 
   const refreshToken = api.user.refreshToken.useMutation({
     onSuccess: (payload) => {
@@ -63,7 +69,7 @@ export default function Quiz() {
   const handleOptionChange = (optionId: string | undefined) => {
     if (!questionQuery.data || !optionId) return;
     answer.mutate({
-      examType: "WARM_UP",
+      examType: examType,
       index: index,
       optionId: optionId,
       examQuestionId: questionQuery.data.id,
@@ -73,7 +79,16 @@ export default function Quiz() {
   const handleFlagQuestion = () => {
     if (!questionQuery.data) return;
     flag.mutate({
-      examType: "WARM_UP",
+      examType: examType,
+      index: index,
+      examQuestionId: questionQuery.data.id,
+    });
+  };
+
+  const handleClearAnswer = () => {
+    if (!questionQuery.data) return;
+    clearAnswer.mutate({
+      examType: examType,
       index: index,
       examQuestionId: questionQuery.data.id,
     });
@@ -102,28 +117,48 @@ export default function Quiz() {
     );
   }
 
-  if (examStatus.isLoading) {
-    return <div></div>
+  if (examStatus?.isLoading) {
+    return <div></div>;
   }
 
-  if (examStatus.error) {
-    return <div>{examStatus.error.message}</div>
+  if (examStatus?.error) {
+    return <div>{examStatus?.error.message}</div>;
   }
 
-  if (examStatus.data?.status === "GRADED" || examStatus.data?.status === "SUBMITTED") {
+  if (
+    examStatus.data?.status === "GRADED" ||
+    examStatus.data?.status === "SUBMITTED"
+  ) {
     setTimeout(() => {
-      void router.push("/")
-    }, 5000)
+      void router.push("/");
+    }, 5000);
     return (
       <div className="flex h-screen flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold">Exam has ended</h1>
+        <h1 className="text-2xl font-bold">Jawaban anda telah tersubmit</h1>
       </div>
-    )
+    );
   }
 
-  if (examStatus.data?.status === "NOT_STARTED") {
-      void router.push("/")
-      return <div></div>
+  if (!examStatus.data?.isActive) {
+    setTimeout(() => {
+      void router.push("/");
+    }, 5000);
+
+    if (Date.now() > new Date(examStatus.data?.endsAt).getTime()) {
+      return (
+        <div className="flex h-screen flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold">
+            Ujian telah selesai, jawaban anda sudah disimpan
+          </h1>
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex h-screen flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold">Ujian belum dimulai</h1>
+        </div>
+      );
+    }
   }
 
   return (
@@ -991,7 +1026,10 @@ export default function Quiz() {
               </h3>
               <div className="mt-5 grid grid-cols-5 gap-3 px-5">
                 {questionStatusQuery.data.examQuestionsStatus.map((item) => (
-                  <Link href={`/competition/quiz?index=${item.index+1}`} key={item.index}>
+                  <Link
+                    href={`/competition/quiz?index=${item.index + 1}`}
+                    key={item.index}
+                  >
                     <div className="relative flex aspect-square rounded-md bg-white p-1.5">
                       {item.isFlagged && (
                         <svg
@@ -1024,19 +1062,18 @@ export default function Quiz() {
                             </p>
                           )}
                         </div>
-                      ) : (
-                        item.isAnswered ?
+                      ) : item.isAnswered ? (
                         <div className="flex h-full w-full items-center justify-center rounded-sm bg-[#76A8E9]">
                           <p className="text-center font-semibold text-primary-dark">
                             {item.index + 1}
                           </p>
-                        </div>:
-                         <div className="flex h-full w-full items-center justify-center rounded-sm">
-                         <p className="text-center font-semibold text-primary-dark">
-                           {item.index + 1}
-                         </p>
-                       </div>
-
+                        </div>
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center rounded-sm">
+                          <p className="text-center font-semibold text-primary-dark">
+                            {item.index + 1}
+                          </p>
+                        </div>
                       )}
                     </div>
                   </Link>
@@ -1361,9 +1398,15 @@ export default function Quiz() {
             questionQuery.data && (
               <>
                 {questionQuery.data.image && (
-                  <Image
+                  // <Image
+                  //   src={questionQuery.data.image}
+                  //   alt="sample"
+                  //   height={400}
+                  //   width={300}
+                  // />
+                  <img
                     src={questionQuery.data.image}
-                    alt="sample"
+                    alt="question image"
                     height={400}
                     width={300}
                   />
@@ -1373,14 +1416,14 @@ export default function Quiz() {
                 </p>
                 <div className="flex w-full flex-col space-y-4">
                   {questionQuery.data.options.map((option, index) => (
-                    <button
-                      key={index}
-                      className="flex items-start space-x-4"
-                      onClick={() => {
-                        handleOptionChange(option?.id);
-                      }}
-                    >
-                      <div className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
+                    <div key={index} className="flex items-start space-x-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleOptionChange(option?.id);
+                        }}
+                        className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs"
+                      >
                         <div
                           className={
                             option?.id == questionQuery.data.answer
@@ -1398,12 +1441,19 @@ export default function Quiz() {
                             ? "D"
                             : "E"}
                         </div>
-                      </div>
+                      </button>
                       <p className="pt-1 text-start text-sm">
                         <Latex>{option?.prompt}</Latex>
                       </p>
-                    </button>
+                    </div>
                   ))}
+                  <button
+                    type="button"
+                    onClick={handleClearAnswer}
+                    className="mr-2 mb-2 w-fit rounded-lg border border-gray-200 bg-white py-2.5 px-5 text-sm font-medium text-primary-dark hover:border-primary-dark hover:bg-gray-100 focus:z-10  focus:outline-none"
+                  >
+                    Clear Answer
+                  </button>
                 </div>
               </>
             )
@@ -1451,9 +1501,15 @@ export default function Quiz() {
               questionQuery.data && (
                 <>
                   {questionQuery.data.image && (
-                    <Image
-                      src="/homepage/background.png"
-                      alt="sample"
+                    // <Image
+                    //   src={questionQuery.data.image}
+                    //   alt="sample"
+                    //   height={400}
+                    //   width={300}
+                    // />
+                    <img
+                      src={questionQuery.data.image}
+                      alt="question image"
                       height={400}
                       width={300}
                     />
@@ -1463,14 +1519,14 @@ export default function Quiz() {
                   </p>
                   <div className="flex w-full flex-col space-y-4">
                     {questionQuery.data.options.map((option, index) => (
-                      <button
+                      <div
                         key={index}
                         className="flex items-start space-x-4"
                         onClick={() => {
                           handleOptionChange(option?.id);
                         }}
                       >
-                        <div className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
+                        <button className="flex aspect-square h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary-dark bg-none text-xs">
                           <div
                             className={
                               option?.id == questionQuery.data.answer
@@ -1488,12 +1544,19 @@ export default function Quiz() {
                               ? "D"
                               : "E"}
                           </div>
-                        </div>
+                        </button>
                         <p className="text-md pt-0.5 text-start">
                           <Latex>{option?.prompt}</Latex>
                         </p>
-                      </button>
+                      </div>
                     ))}
+                    <button
+                      type="button"
+                      onClick={handleClearAnswer}
+                      className="mr-2 mb-2 w-fit rounded-lg border border-gray-200 bg-white py-2.5 px-5 text-sm font-medium text-primary-dark hover:border-primary-dark hover:bg-gray-100 focus:z-10 focus:outline-none"
+                    >
+                      Clear Answer
+                    </button>
                   </div>
                 </>
               )
@@ -1550,10 +1613,10 @@ export default function Quiz() {
                 </p>
               </button>
             )}
-            {questionStatusQuery?.data &&(
-              index <
-                questionStatusQuery.data.examQuestionsStatus.length - 1 ? 
-                (<Link
+            {questionStatusQuery?.data &&
+              (index <
+              questionStatusQuery.data.examQuestionsStatus.length - 1 ? (
+                <Link
                   href={`/competition/quiz?index=${index + 2}`}
                   className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-3 shadow-md"
                 >
@@ -1561,17 +1624,18 @@ export default function Quiz() {
                   <p className="text-sm font-medium text-white">
                     Soal selanjutnya
                   </p>
-                </Link>) : 
-                index == questionStatusQuery.data.examQuestionsStatus.length - 1 &&(
-                  <Link
-                  href={`/competition/quiz/submit`}
-                  className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-8 shadow-md"
-                >
-                  <p className="text-sm font-medium text-white">
-                    Submit
-                  </p>
                 </Link>
-                ))}
+              ) : (
+                index ==
+                  questionStatusQuery.data.examQuestionsStatus.length - 1 && (
+                  <Link
+                    href={`/competition/quiz/submit`}
+                    className="flex items-center space-x-4 rounded-lg bg-primary-dark py-2 px-8 shadow-md"
+                  >
+                    <p className="text-sm font-medium text-white">Submit</p>
+                  </Link>
+                )
+              ))}
           </div>
         </div>
       </div>
@@ -1614,17 +1678,19 @@ export default function Quiz() {
           </button>
         )}
 
-        {questionStatusQuery?.data && (
-          index < questionStatusQuery.data.examQuestionsStatus.length - 1 ? (
+        {questionStatusQuery?.data &&
+          (index < questionStatusQuery.data.examQuestionsStatus.length - 1 ? (
             <Link href={`/competition/quiz?index=${index + 2}`}>
               <IoChevronForward size={24} className="text-white" />
             </Link>
-          ) : 
-          index == questionStatusQuery.data.examQuestionsStatus.length - 1 &&
-          <Link href={`/competition/quiz/submit`}>
-              <p className=" text-white font-medium">Submit</p>
-            </Link>)}
-          
+          ) : (
+            index ==
+              questionStatusQuery.data.examQuestionsStatus.length - 1 && (
+              <Link href={`/competition/quiz/submit`}>
+                <p className=" font-medium text-white">Submit</p>
+              </Link>
+            )
+          ))}
       </nav>
     </div>
   );

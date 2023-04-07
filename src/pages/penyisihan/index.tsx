@@ -210,7 +210,7 @@ export default function PenyisihanPage() {
               //on-going exam
               if (getExamStatus.data?.timeRemaining > 0) {
                 openModal();
-              } else if (getExamStatus.data?.timeRemaining == 0) {
+              } else if (getExamStatus.data?.timeRemaining <= 0) {
                 setError(
                   "Exam telah selesai. Jawaban Anda telah disimpan server."
                 );
