@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { privateProcedure } from "~/server/api/trpc";
 
-import { ExamType } from "@prisma/client";
+import { type Exam, ExamType } from "@prisma/client";
 import { getUserId } from "~/server/api/services/authService";
 import {
   getExamByUserId,
@@ -18,14 +18,25 @@ export const getExamStatus = privateProcedure
     const { examType } = input;
     const exam = await getExamByUserId(userId, examType, ctx.prisma);
 
-    const date = new Date();
-    const isActive = date >= exam.startTime && date <= exam.endTime;
+    // const date = new Date();
+    // const isActive = date >= exam.startTime && date <= exam.endTime;
 
     return {
       startsAt: exam.startTime,
       endsAt: exam.endTime,
       status: exam.status,
       timeRemaining: getTimeRemaining(exam),
-      isActive: isActive,
+      isActive: isActive(exam),
     };
   });
+
+function isActive(exam: Exam) {
+  if (exam.status === "GRADED" || exam.status === "SUBMITTED") return false;
+
+  const date = new Date();
+  if (date >= exam.startTime && date <= exam.endTime) {
+    return true;
+  }
+
+  return true;
+}

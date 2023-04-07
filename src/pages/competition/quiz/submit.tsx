@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { api, setToken } from "~/utils/api";
@@ -64,25 +65,30 @@ export default function SubmitExam() {
     );
   }
 
-
   return (
-    <div className=" mx-auto flex h-screen max-w-lg flex-col items-center justify-center gap-4 text-lg font-medium text-primary-dark ">
-      <h1>Apakah anda yakin akan mengumpulkan ujian?</h1>
-      <div className=" flex w-full flex-col gap-4 px-8">
-        <button
-          className=" w-full rounded-xl border border-primary-dark py-2"
-          onClick={() => void router.push("/competition/quiz")}
-        >
-          Kembali
-        </button>
+    <>
+      <Head>
+        <title>Submit / Joints Logic Competition</title>
+        <meta name="description" content="Joints Logic Competition Website" />
+      </Head>
+      <div className=" mx-auto flex h-screen max-w-lg flex-col items-center justify-center gap-4 text-lg font-medium text-primary-dark ">
+        <h1>Apakah anda yakin akan mengumpulkan ujian?</h1>
+        <div className=" flex w-full flex-col gap-4 px-8">
+          <button
+            className=" w-full rounded-xl border border-primary-dark py-2"
+            onClick={() => void router.push("/competition/quiz")}
+          >
+            Kembali
+          </button>
 
-        <button
-          className="w-full rounded-xl border bg-primary-dark py-2 text-white transition-all active:border-primary-dark active:bg-white"
-          onClick={() => submitExam.mutate({ examType: examType })}
-        >
-          Submit
-        </button>
+          <button
+            className="w-full rounded-xl border bg-primary-dark py-2 text-white transition-all active:border-primary-dark active:bg-white"
+            onClick={() => submitExam.mutate({ examType: examType })}
+          >
+            Submit
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
