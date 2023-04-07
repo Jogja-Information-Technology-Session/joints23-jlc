@@ -38,7 +38,7 @@ export default function Timeline() {
   }, [size]);
 
   return (
-    <>
+    <div>
       <section
         ref={triggerRef}
         className="relative flex flex-col items-center justify-center overflow-hidden bg-[url(/homepage/background.png)] bg-cover py-16 text-[#223144] sm:px-20 lg:h-screen"
@@ -152,7 +152,7 @@ export default function Timeline() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
