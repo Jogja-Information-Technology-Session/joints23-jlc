@@ -38,7 +38,7 @@ export default function Timeline() {
   }, [size]);
 
   return (
-    <>
+    <div>
       <section
         ref={triggerRef}
         className="relative flex flex-col items-center justify-center overflow-hidden bg-[url(/homepage/background.png)] bg-cover py-16 text-[#223144] sm:px-20 lg:h-screen"
@@ -46,39 +46,8 @@ export default function Timeline() {
         <h1 className="relative z-10 mb-12 hidden text-center text-5xl font-extrabold lg:block">
           Timeline
         </h1>
-        <div ref={sectionRef} className="relative z-10">
+        <div ref={sectionRef}>
           <div className="relative z-10 h-full w-full flex-col items-start justify-center lg:flex">
-            {/* mobile */}
-            <div className="relative flex flex-col gap-y-6 lg:hidden">
-              {timelineItems.map((item, i) => (
-                <div
-                  key={i}
-                  className="relative flex -translate-x-[20%] items-center justify-center gap-x-2"
-                  // onClick={() => setActive(i)}
-                >
-                  <div className="relative mx-auto ml-auto mr-0 w-fit">
-                    <h2 className="relative z-10 mt-2 flex aspect-square h-[1.75em] w-auto items-center justify-center rounded-full bg-primary-dark text-2xl font-extrabold text-[#f4f4f4]">
-                      {i + 1}
-                    </h2>
-                    <div
-                      className={`absolute left-1/2 top-[1em] h-[250%] w-1 -translate-x-1/2 bg-primary-dark ${
-                        i != timelineItems.length - 1 ? "" : "hidden"
-                      }`}
-                    ></div>
-                    <div
-                      className={`absolute -top-[1.5em] left-[27.5%] ml-2 h-[200%] w-[500%] rounded border-4 border-primary-dark 
-                      `}
-                    ></div>
-                  </div>
-                  <div className="relative w-1/2">
-                    <p className="w-[90%] text-xl font-extrabold">
-                      {item.title}
-                    </p>
-                    <span className="text-[14px]">{item.date}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
             {/* desktop */}
             <div className="relative z-10 hidden w-full items-start justify-center lg:flex">
               {timelineItems.map((item, index) => (
@@ -126,6 +95,37 @@ export default function Timeline() {
                 </div>
               ))}
             </div>
+            {/* mobile */}
+            <div className="relative flex flex-col gap-y-6 lg:hidden">
+              {timelineItems.map((item, i) => (
+                <div
+                  key={i}
+                  className="relative flex -translate-x-[20%] items-center justify-center gap-x-2"
+                  // onClick={() => setActive(i)}
+                >
+                  <div className="relative mx-auto ml-auto mr-0 w-fit">
+                    <h2 className="relative z-10 mt-2 flex aspect-square h-[1.75em] w-auto items-center justify-center rounded-full bg-primary-dark text-2xl font-extrabold text-[#f4f4f4]">
+                      {i + 1}
+                    </h2>
+                    <div
+                      className={`absolute left-1/2 top-[1em] h-[250%] w-1 -translate-x-1/2 bg-primary-dark ${
+                        i != timelineItems.length - 1 ? "" : "hidden"
+                      }`}
+                    ></div>
+                    <div
+                      className={`absolute -top-[1.5em] left-[27.5%] ml-2 h-[200%] w-[500%] rounded border-4 border-primary-dark 
+                      `}
+                    ></div>
+                  </div>
+                  <div className="relative w-1/2">
+                    <p className="w-[90%] text-xl font-extrabold">
+                      {item.title}
+                    </p>
+                    <span className="text-[14px]">{item.date}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -152,7 +152,7 @@ export default function Timeline() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
@@ -170,7 +170,7 @@ const timelineItems = [
   },
   {
     title: "Warmup Penyisihan",
-    date: "8 April 2023",
+    date: "9 April 2023",
   },
   {
     title: "Penyisihan",
