@@ -12,18 +12,6 @@ import { ExamStatus } from "@prisma/client";
 
 const guides = [
   {
-    title: "Tata Cara Mengakses Soal Penyisihan",
-    guide: [
-      "Klik link (laman web)",
-      "Klik tombol `Login` yang ada pada Kanan Atas",
-      "Kemudian pilih opsi Login dengan Google",
-      "Masuk dengan akun Google yang telah diisikan pada formulir pendaftaran",
-      "Silakan pilih button dropdown `Competition`",
-      "Pilih course yang sesuai (warmup sama penyisihan)",
-      "Setelah paham dengan peraturan dan ketentuan yang ada, klik `Mulai kerjakan` dan kalian sudah berhasil masuk ke laman pengerjaan soal.",
-    ],
-  },
-  {
     title: "Tata Cara Pengerjaan Soal",
     guide: [
       "Seluruh peserta bertanggung jawab penuh terhadap kesiapan koneksi internet dan perangkat yang digunakan untuk mengikuti babak penyisihan. Apabila terdapat kendala yang dialami peserta sehubungan dengan hal-hal tersebut, diharapkan untuk segera menghubungi narahubung tertera.",
