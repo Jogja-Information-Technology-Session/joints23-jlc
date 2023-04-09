@@ -23,6 +23,7 @@ const guides = [
       "Bentuk penyisihan adalah soal pilihan ganda berjumlah 40 butir soal. Cara menjawab adalah dengan memilih 1 jawaban diantara pilihan jawaban lain yang sudah disediakan.",
       "Penilaian pada babak ini dilakukan berdasarkan benar, tidak, atau kosongnya jawaban.\n Setiap soal dengan jawaban benar bernilai +4. \n Setiap soal dengan jawaban kosong bernilai 0. \n Setiap soal dengan jawaban salah bernilai -1.",
       "Poin maksimal yang dapat diperoleh pada babak ini adalah 160.",
+      "Peserta dilarang menggunakan alat bantu hitung dalam bentuk apapun.",
       "Panitia berhak mendiskualifikasi peserta yang dianggap melakukan pelanggaran atau kecurangan selama pelaksanaan babak penyisihan.",
       "Semua keputusan panitia adalah mutlak dan tidak dapat diganggu gugat.",
     ],
