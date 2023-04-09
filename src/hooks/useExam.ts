@@ -1,23 +1,28 @@
+import { useEffect, useState } from "react";
+import { clearAnswer } from "~/server/api/routers/routes/examRouter/mutateExamQuestion";
 import { api } from "~/utils/api";
 
-export default function useExam(index: number, team: string) {
+export default function useExam(index: number) {
   const utils = api.useContext();
+  const examType = "WARM_UP";
+
+  const [started, setStarted] = useState(false);
 
   const questionQuery = api.exam.getExamQuestion.useQuery(
     {
       index: index,
-      examType: "WARM_UP",
+      examType: examType,
     },
     {
-      enabled: !!team,
+      enabled: started,
     }
   );
   const questionStatusQuery = api.exam.getExamQuestionStatus.useQuery(
     {
-      examType: "WARM_UP",
+      examType: examType,
     },
     {
-      enabled: !!team,
+      enabled: started,
     }
   );
 
@@ -33,10 +38,31 @@ export default function useExam(index: number, team: string) {
     },
   });
 
+  const examStatus = api.exam.getExamStatus.useQuery({
+    examType: examType,
+  });
+
+  const clearAnswer = api.exam.clearAnswer.useMutation({
+    onSettled: async () => {
+      await utils.exam.invalidate();
+    },
+  });
+
+  useEffect(() => {
+    if (examStatus.data?.isActive) {
+      setStarted(true);
+    } else {
+      setStarted(false);
+    }
+  }, [examStatus.data?.isActive]);
+
+
   return {
     questionQuery,
     questionStatusQuery,
     answer,
     flag,
+    examStatus,
+    clearAnswer
   };
 }
