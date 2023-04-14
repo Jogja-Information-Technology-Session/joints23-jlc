@@ -36,7 +36,7 @@ function isActive(exam: Exam) {
   const date = new Date();
   if (date >= exam.startTime && date <= exam.endTime) {
     return true;
+  } else {
+    return false;
   }
-
-  return true;
 }
