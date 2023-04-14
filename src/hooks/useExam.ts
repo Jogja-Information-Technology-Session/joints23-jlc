@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { clearAnswer } from "~/server/api/routers/routes/examRouter/mutateExamQuestion";
 import { api } from "~/utils/api";
 
 export default function useExam(index: number) {
   const utils = api.useContext();
-  const examType = "WARM_UP";
+  const examType = "PENYISIHAN";
 
   const [started, setStarted] = useState(false);
 
@@ -56,13 +55,12 @@ export default function useExam(index: number) {
     }
   }, [examStatus.data?.isActive]);
 
-
   return {
     questionQuery,
     questionStatusQuery,
     answer,
     flag,
     examStatus,
-    clearAnswer
+    clearAnswer,
   };
 }

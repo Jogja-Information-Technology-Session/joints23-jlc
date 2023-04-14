@@ -9,7 +9,7 @@ export default function Countdown() {
   const interval = useRef<NodeJS.Timeout | number>();
 
   const startTimer = () => {
-    const date = new Date("April 16, 2023 00:00:00").getTime();
+    const date = new Date("April 16, 2023 13:00:00").getTime();
 
     interval.current = setInterval(() => {
       const now = new Date().getTime();

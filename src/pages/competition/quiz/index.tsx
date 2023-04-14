@@ -25,7 +25,7 @@ export default function Quiz() {
   const { setTeam, team } = useContext(TeamContext) as TeamContextType;
 
   const router = useRouter();
-  const examType = "WARM_UP";
+  const examType = "PENYISIHAN";
 
   useEffect(() => {
     if (!router.query.index) {
@@ -163,10 +163,7 @@ export default function Quiz() {
   return (
     <>
       <Head>
-        <title>
-          {examType === "WARM_UP" ? "Warm Up" : "Penyisihan"} ({index + 1}) /
-          Joints Logic Competition
-        </title>
+        <title>Penyisihan ({index + 1}) / Joints Logic Competition</title>
         <meta name="description" content="Joints Logic Competition Website" />
       </Head>
       <div className="relative h-screen overflow-clip">
@@ -620,98 +617,100 @@ export default function Quiz() {
                 <div className="mt-5 grid grid-cols-5 gap-3 px-5">
                   {
                     //generate 1-40 array and map it
-                    questionStatusQuery.data.examQuestionsStatus.map((item) => (
-                      <button key={item.index}>
-                        {item.index == 0 ? (
-                          <div className="flex aspect-square rounded-md bg-white p-1.5">
-                            <div className="flex h-full w-full items-center justify-center rounded-sm bg-[#76A8E9]">
-                              <p className="text-center font-semibold text-primary-dark">
-                                {item.index + 1}
-                              </p>
-                            </div>
-                          </div>
-                        ) : item.index == 1 ? (
-                          <div className="relative flex aspect-square items-center justify-center rounded-md bg-white p-1.5">
-                            <svg
-                              width="20"
-                              height="20"
-                              className="absolute top-0 right-0"
-                              viewBox="0 0 16 16"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
-                                d="M16 16L0 0H12C14.2091 0 16 1.79086 16 4V16Z"
-                                fill="#E04C4C"
-                              />
-                            </svg>
-                            <div className="flex h-full w-full items-center justify-center rounded-sm bg-[#76A8E9]">
-                              <p className="text-center font-semibold text-primary-dark">
-                                {item.index + 1}
-                              </p>
-                            </div>
-                          </div>
-                        ) : item.index == 2 ? (
-                          <div className="flex aspect-square rounded-md bg-white p-1">
-                            <div className="flex h-full w-full items-center justify-center rounded-sm bg-primary-dark p-1">
+                    questionStatusQuery.data?.examQuestionsStatus.map(
+                      (item) => (
+                        <button key={item.index}>
+                          {item.index == 0 ? (
+                            <div className="flex aspect-square rounded-md bg-white p-1.5">
                               <div className="flex h-full w-full items-center justify-center rounded-sm bg-[#76A8E9]">
                                 <p className="text-center font-semibold text-primary-dark">
                                   {item.index + 1}
                                 </p>
                               </div>
                             </div>
-                          </div>
-                        ) : item.index == 3 ? (
-                          <div className="relative flex aspect-square rounded-md bg-white p-1">
-                            <svg
-                              width="20"
-                              height="20"
-                              className="absolute top-0 right-0"
-                              viewBox="0 0 16 16"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
-                                d="M16 16L0 0H12C14.2091 0 16 1.79086 16 4V16Z"
-                                fill="#E04C4C"
-                              />
-                            </svg>
-                            <div className="flex h-full w-full items-center justify-center rounded-sm bg-primary-dark">
-                              <p className="text-center font-semibold text-white">
-                                {item.index + 1}
-                              </p>
+                          ) : item.index == 1 ? (
+                            <div className="relative flex aspect-square items-center justify-center rounded-md bg-white p-1.5">
+                              <svg
+                                width="20"
+                                height="20"
+                                className="absolute top-0 right-0"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  clip-rule="evenodd"
+                                  d="M16 16L0 0H12C14.2091 0 16 1.79086 16 4V16Z"
+                                  fill="#E04C4C"
+                                />
+                              </svg>
+                              <div className="flex h-full w-full items-center justify-center rounded-sm bg-[#76A8E9]">
+                                <p className="text-center font-semibold text-primary-dark">
+                                  {item.index + 1}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        ) : item.index == 4 ? (
-                          <div className="relative flex aspect-square items-center justify-center rounded-md bg-white p-1.5 font-semibold">
-                            <svg
-                              width="20"
-                              height="20"
-                              className="absolute top-0 right-0"
-                              viewBox="0 0 16 16"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
-                                d="M16 16L0 0H12C14.2091 0 16 1.79086 16 4V16Z"
-                                fill="#E04C4C"
-                              />
-                            </svg>
-                            {item.index + 1}
-                          </div>
-                        ) : (
-                          <div className="flex aspect-square items-center justify-center rounded-md bg-white p-1.5 font-semibold">
-                            {item.index + 1}
-                          </div>
-                        )}
-                      </button>
-                    ))
+                          ) : item.index == 2 ? (
+                            <div className="flex aspect-square rounded-md bg-white p-1">
+                              <div className="flex h-full w-full items-center justify-center rounded-sm bg-primary-dark p-1">
+                                <div className="flex h-full w-full items-center justify-center rounded-sm bg-[#76A8E9]">
+                                  <p className="text-center font-semibold text-primary-dark">
+                                    {item.index + 1}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ) : item.index == 3 ? (
+                            <div className="relative flex aspect-square rounded-md bg-white p-1">
+                              <svg
+                                width="20"
+                                height="20"
+                                className="absolute top-0 right-0"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  clip-rule="evenodd"
+                                  d="M16 16L0 0H12C14.2091 0 16 1.79086 16 4V16Z"
+                                  fill="#E04C4C"
+                                />
+                              </svg>
+                              <div className="flex h-full w-full items-center justify-center rounded-sm bg-primary-dark">
+                                <p className="text-center font-semibold text-white">
+                                  {item.index + 1}
+                                </p>
+                              </div>
+                            </div>
+                          ) : item.index == 4 ? (
+                            <div className="relative flex aspect-square items-center justify-center rounded-md bg-white p-1.5 font-semibold">
+                              <svg
+                                width="20"
+                                height="20"
+                                className="absolute top-0 right-0"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  clip-rule="evenodd"
+                                  d="M16 16L0 0H12C14.2091 0 16 1.79086 16 4V16Z"
+                                  fill="#E04C4C"
+                                />
+                              </svg>
+                              {item.index + 1}
+                            </div>
+                          ) : (
+                            <div className="flex aspect-square items-center justify-center rounded-md bg-white p-1.5 font-semibold">
+                              {item.index + 1}
+                            </div>
+                          )}
+                        </button>
+                      )
+                    )
                   }
                 </div>
               </div>
@@ -1107,7 +1106,7 @@ export default function Quiz() {
                 Navigasi Soal
               </h3>
               <div className="mt-5 grid grid-cols-5 gap-3 px-5">
-                {questionStatusQuery.data.examQuestionsStatus.map((item) => (
+                {questionStatusQuery?.data?.examQuestionsStatus.map((item) => (
                   <Link
                     href={`/competition/quiz?index=${item.index + 1}`}
                     key={item.index}
